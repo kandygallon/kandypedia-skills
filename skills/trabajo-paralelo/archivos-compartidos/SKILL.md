@@ -1,5 +1,5 @@
 ---
-name: Archivos Compartidos
+name: archivos-compartidos
 description: Usa esta skill para gestionar archivos que varios agentes necesitan modificar, evitando conflictos y sobrescrituras.
 ---
 

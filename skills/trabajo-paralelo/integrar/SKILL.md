@@ -1,5 +1,5 @@
 ---
-name: Integrar
+name: integrar
 description: Usa esta skill para mergear todas las branches paralelas en el orden correcto, resolver conflictos y verificar que el resultado funciona end-to-end.
 ---
 

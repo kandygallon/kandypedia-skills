@@ -1,5 +1,5 @@
 ---
-name: Desde Cero
+name: desde-cero
 description: Usa esta skill cuando comiences un proyecto nuevo desde cero. Hace las preguntas correctas antes de escribir código y produce una especificación mínima.
 ---
 

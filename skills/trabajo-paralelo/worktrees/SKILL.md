@@ -1,5 +1,5 @@
 ---
-name: Worktrees
+name: worktrees
 description: Usa esta skill para configurar worktrees de git, uno por tarea paralela, para que varios agentes trabajen sin pisarse.
 ---
 
