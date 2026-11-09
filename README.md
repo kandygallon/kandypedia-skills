@@ -17,6 +17,8 @@ Estos skills te guían paso a paso en ese proceso.
 
 ## Skills disponibles
 
+> 📖 **[Ver referencia completa de comandos](docs/comandos.md)** con ejemplos de uso, flujos típicos e instalación en Cursor.
+
 ### 📋 Planificación (antes del código)
 
 #### [`/analizar-existente`](skills/planificacion/analizar-existente/SKILL.md)
@@ -28,6 +30,11 @@ Para entender código o flujos existentes antes de modificarlos. Mapea el sistem
 Para proyectos nuevos desde cero. Hace las preguntas correctas antes de escribir código y produce una especificación mínima.
 
 **Úsala cuando:** comienzas un proyecto completamente nuevo.
+
+#### [`/extraer-reglas`](skills/planificacion/extraer-reglas/SKILL.md)
+Para extraer reglas de negocio de servicios legacy durante migraciones. El código legacy es la fuente de verdad para las reglas, no para el diseño.
+
+**Úsala cuando:** migras un servicio legacy a una nueva arquitectura y necesitas documentar todas sus reglas de negocio.
 
 ---
 
@@ -79,6 +86,17 @@ Mergea todas las branches paralelas en el orden correcto, resuelve conflictos y 
 5. Trabajar en paralelo (cada agente en su worktree)
 6. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar cada tarea
 7. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
+
+### Para migraciones de legacy:
+1. [`/extraer-reglas`](skills/planificacion/extraer-reglas/SKILL.md) → documentar reglas del legacy en `reglas.md`
+2. Revisar reglas con experto de dominio → resolver dudas
+3. [`/desde-cero`](skills/planificacion/desde-cero/SKILL.md) con `@reglas.md` → especificar nuevo servicio
+4. [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md) → dividir implementación
+5. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → espacios de trabajo
+6. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
+7. Implementar con tests por cada regla
+8. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar
+9. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
 
 ---
 
@@ -141,11 +159,15 @@ Estos skills son archivos markdown con instrucciones claras. Puedes:
 kandypedia-skills/
 ├── README.md                    # Este archivo
 ├── LICENSE                      # MIT License
+├── docs/
+│   └── comandos.md              # Referencia completa de comandos
 └── skills/
     ├── planificacion/
     │   ├── analizar-existente/
     │   │   └── SKILL.md
-    │   └── desde-cero/
+    │   ├── desde-cero/
+    │   │   └── SKILL.md
+    │   └── extraer-reglas/
     │       └── SKILL.md
     └── trabajo-paralelo/
         ├── reparto/
