@@ -1,5 +1,5 @@
 ---
-name: Analizar Existente
+name: analizar-existente
 description: Usa esta skill cuando necesites entender un código o flujo existente antes de modificarlo. Mapea el sistema actual, identifica riesgos y reglas de negocio implícitas.
 ---
 
@@ -161,9 +161,9 @@ Estas dudas deben ser **específicas y accionables**, no genéricas.
    # Diagnóstico: Agregar teléfono al registro
 
    ## Estado actual
-   - Formulario: `app/views/usuarios/registro.ctp`
-   - Controlador: `UsuariosController::registrar()`
-   - Modelo: `Usuario.php` con validaciones de email/password
+   - Formulario: `src/components/RegistroUsuario.tsx`
+   - Controlador: `usuarios.controller.ts`
+   - Modelo: modelo `Usuario` con validaciones de email/password
    - Base de datos: tabla `usuarios` (columna `telefono` ya existe pero no se usa)
 
    ## Flujo actual

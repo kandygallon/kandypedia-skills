@@ -1,5 +1,5 @@
 ---
-name: Reparto
+name: reparto
 description: Usa esta skill para dividir un proyecto o especificación en tareas independientes que pueden ejecutarse en paralelo por distintos agentes.
 ---
 

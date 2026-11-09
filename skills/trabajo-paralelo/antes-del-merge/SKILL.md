@@ -1,5 +1,5 @@
 ---
-name: Antes del Merge
+name: antes-del-merge
 description: Usa esta skill antes de mergear tu branch. Verifica que tu tarea está completa, no rompiste nada, y respetaste las fronteras asignadas.
 ---
 
