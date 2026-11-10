@@ -127,27 +127,32 @@ Revisa el código con ojos frescos en un chat nuevo con modelo diferente, como s
 
 ## Instalación
 
-### Opción 1: Clonar el repositorio (recomendado)
+### En Cursor, para todos tus proyectos (recomendado)
 
 ```bash
-git clone https://github.com/kandygallon/kandypedia-skills.git ~/.cursor/kandypedia-skills
+git clone https://github.com/kandygallon/kandypedia-skills.git ~/.cursor/skills/kandypedia
 ```
 
-Luego, en Cursor:
-1. Ve a **Settings** → **Cursor Settings** → **Features**
-2. En **Skill directories**, agrega: `~/.cursor/kandypedia-skills/skills`
+Cursor busca skills en `~/.cursor/skills/` y entra en las subcarpetas, así que las 11 aparecen solas.
+Escribe `/` en el chat del agente para verlas. Si no aparecen, reinicia Cursor.
 
-### Opción 2: Descargar skills individuales
+Para actualizarlas:
 
-Descarga los archivos `.md` que necesites y colócalos en tu directorio de skills de Cursor.
-
-### Opción 3: Referenciar por URL
-
-En Cursor, puedes referenciar skills directamente:
-
+```bash
+git -C ~/.cursor/skills/kandypedia pull
 ```
-@https://raw.githubusercontent.com/kandygallon/kandypedia-skills/main/skills/planificacion/analizar-existente/SKILL.md
+
+### Solo en un proyecto
+
+```bash
+git clone https://github.com/kandygallon/kandypedia-skills.git /tmp/kandypedia-skills
+mkdir -p .cursor/skills
+cp -R /tmp/kandypedia-skills/skills/*/* .cursor/skills/
 ```
+
+### Una sola skill
+
+Copia la carpeta de esa skill (la que contiene el `SKILL.md`) dentro de `~/.cursor/skills/`.
 
 ---
 
