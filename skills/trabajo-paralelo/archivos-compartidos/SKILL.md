@@ -5,6 +5,12 @@ description: Usa esta skill para gestionar archivos que varios agentes necesitan
 
 # Archivos Compartidos
 
+> **De dónde sale.** En el rediseño de kandypedia.com, los cuatro agentes iban a tocar el mismo archivo:
+> `translations.js`, con todos los textos del sitio en tres idiomas. Antes de lanzar a ninguno, lo partí en
+> 15 archivos, uno por sección, y comprobé que el resultado era idéntico al original. Al juntar las cuatro
+> ramas no hubo ni un conflicto. El trabajo de verdad no fue escribir prompts: fue conseguir que ningún
+> archivo tuviera dos dueños.
+
 ## ¿Cuándo usar esta skill?
 
 Úsala cuando:

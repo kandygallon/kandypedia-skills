@@ -5,6 +5,11 @@ description: Usa esta skill para dividir un proyecto o especificación en tareas
 
 # Reparto
 
+> **De dónde sale.** Cuando rediseñé kandypedia.com con cuatro agentes, antes de escribir los encargos le
+> pasé el plan a un agente orquestador. Lo primero que hizo fue preguntarme qué hacer con las secciones que
+> no tenían dueño claro. Encontró cinco huecos, entre ellos una página de gracias que no era de nadie. Desde
+> entonces, un reparto no está listo hasta que cada archivo tiene un dueño, y solo uno.
+
 ## ¿Cuándo usar esta skill?
 
 Úsala cuando:
