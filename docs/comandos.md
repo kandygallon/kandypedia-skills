@@ -570,72 +570,46 @@ Todas pasaron /antes-del-merge. Necesito mergearlas a main en el orden correcto.
 
 ## 📦 Instalación en Cursor
 
+Cursor descubre skills automáticamente desde directorios específicos. 
+
+**Documentación oficial**: [Cursor Agent Skills](https://cursor.com/docs/skills)
+
 ### Opción 1: Instalación global (recomendado)
 
-Instala los skills en tu directorio personal de Cursor para usarlos en todos tus proyectos:
+Instala en tu directorio personal para usar en todos tus proyectos:
 
 ```bash
-# Clonar el repositorio
-git clone https://github.com/kandygallon/kandypedia-skills.git
-
-# Crear directorio de skills global si no existe
-mkdir -p ~/.cursor/skills
-
-# Copiar todos los skills
-cp -R kandypedia-skills/skills/*/* ~/.cursor/skills/
-
-# Verificar
-ls ~/.cursor/skills/
-# Deberías ver: analizar-existente, desde-cero, extraer-reglas, reparto, 
-# worktrees, archivos-compartidos, antes-del-merge, integrar
+git clone https://github.com/kandygallon/kandypedia-skills.git ~/.cursor/skills/kandypedia
 ```
 
-**Ventaja de instalación global:**
-- ✅ Los skills NO se commitean al repositorio de tu empleador
-- ✅ Disponibles en todos tus proyectos
-- ✅ Actualizas una sola vez para todos los proyectos
+Cursor descubre automáticamente skills en `~/.cursor/skills/` y subdirectorios.
 
-**Configurar en Cursor:**
-1. Ve a **Settings** → **Cursor Settings** → **Features**
-2. En **Skill directories**, agrega: `~/.cursor/skills`
-3. Reinicia Cursor
+**Ventajas:**
+- ✅ Los skills NO se commitean al repositorio de tu empleador
+- ✅ Disponibles en todos tus proyectos locales
+- ✅ Actualizas una sola vez: `cd ~/.cursor/skills/kandypedia && git pull`
+
+**Nota:** Cursor también descubre skills en `~/.agents/skills/` y `.claude/skills/` por compatibilidad.
 
 ### Opción 2: Instalación por proyecto
 
-Si prefieres tener los skills en el proyecto (y commitearlos al repo):
+Si prefieres tener los skills en el proyecto:
 
 ```bash
 # Dentro de tu proyecto
-mkdir -p .cursor/skills
+git clone https://github.com/kandygallon/kandypedia-skills.git .cursor/skills/kandypedia
 
-# Copiar skills
-cp -R /path/to/kandypedia-skills/skills/*/* .cursor/skills/
-
-# Agregar al .gitignore si NO quieres commitearlos
+# Opcional: agregar al .gitignore si NO quieres commitearlos
 echo ".cursor/skills/" >> .gitignore
 ```
 
-**Configurar en Cursor:**
-1. Ve a **Settings** → **Cursor Settings** → **Features**
-2. En **Skill directories**, agrega: `.cursor/skills`
-
-### Opción 3: Referenciar por URL (sin instalación)
-
-Puedes invocar skills directamente por URL:
-
-```
-@https://raw.githubusercontent.com/kandygallon/kandypedia-skills/main/skills/planificacion/analizar-existente/SKILL.md
-```
-
-**Ventaja:** No necesitas instalar nada.
-
-**Desventaja:** URLs largas, menos conveniente.
+Cursor descubre skills en `.cursor/skills/` y `.agents/skills/` del proyecto.
 
 ---
 
 ## 💡 Uso en el chat
 
-Una vez instalados, invoca los skills en Cursor con `/`:
+Invoca skills escribiendo `/` en el chat y buscando el nombre:
 
 ```
 /analizar-existente
@@ -643,14 +617,7 @@ Una vez instalados, invoca los skills en Cursor con `/`:
 Necesito modificar el flujo de autenticación...
 ```
 
-O menciona la skill en contexto:
-
-```
-Antes de modificar este código, usa /analizar-existente 
-para entender cómo funciona actualmente.
-```
-
-El agente leerá automáticamente la skill y seguirá sus instrucciones.
+Cursor carga la skill automáticamente cuando es relevante.
 
 ---
 

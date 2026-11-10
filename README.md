@@ -127,27 +127,38 @@ Revisa el código con ojos frescos en un chat nuevo con modelo diferente, como s
 
 ## Instalación
 
-### Opción 1: Clonar el repositorio (recomendado)
+Cursor descubre skills automáticamente desde directorios específicos. Más info: [Cursor Agent Skills docs](https://cursor.com/docs/skills)
+
+### Opción 1: Instalación global (recomendado)
+
+Instala en tu directorio personal para usar en todos tus proyectos:
 
 ```bash
-git clone https://github.com/kandygallon/kandypedia-skills.git ~/.cursor/kandypedia-skills
+git clone https://github.com/kandygallon/kandypedia-skills.git ~/.cursor/skills/kandypedia
 ```
 
-Luego, en Cursor:
-1. Ve a **Settings** → **Cursor Settings** → **Features**
-2. En **Skill directories**, agrega: `~/.cursor/kandypedia-skills/skills`
+Cursor descubre automáticamente los skills en `~/.cursor/skills/` y sus subdirectorios.
 
-### Opción 2: Descargar skills individuales
+**Ventaja:** Los skills NO se commitean al repositorio de tu empleador y están disponibles en todos tus proyectos locales.
 
-Descarga los archivos `.md` que necesites y colócalos en tu directorio de skills de Cursor.
-
-### Opción 3: Referenciar por URL
-
-En Cursor, puedes referenciar skills directamente:
-
+**Actualizar:**
+```bash
+cd ~/.cursor/skills/kandypedia && git pull
 ```
-@https://raw.githubusercontent.com/kandygallon/kandypedia-skills/main/skills/planificacion/analizar-existente/SKILL.md
+
+### Opción 2: Instalación por proyecto
+
+Si prefieres tener los skills en el proyecto:
+
+```bash
+# Dentro de tu proyecto
+git clone https://github.com/kandygallon/kandypedia-skills.git .cursor/skills/kandypedia
+
+# Opcional: agregar al .gitignore si NO quieres commitearlos
+echo ".cursor/skills/" >> .gitignore
 ```
+
+Cursor descubre skills en `.cursor/skills/` del proyecto.
 
 ---
 
@@ -155,26 +166,15 @@ En Cursor, puedes referenciar skills directamente:
 
 ### En Cursor
 
-Una vez instalado, puedes invocar las skills en tu chat con el agente:
+Invoca skills escribiendo `/` en el chat y buscando el nombre:
 
 ```
 /analizar-existente
+
+Necesito modificar el flujo de autenticación...
 ```
 
-O simplemente mencionando el contexto:
-
-```
-Analiza este código antes de modificarlo (usa /analizar-existente)
-```
-
-El agente leerá automáticamente la skill y seguirá sus instrucciones.
-
-### Con otros agentes
-
-Estos skills son archivos markdown con instrucciones claras. Puedes:
-- Copiar el contenido y pegarlo como prompt
-- Compartir el link al archivo en GitHub
-- Incluirlos en tu sistema de prompts personalizado
+O menciónalas en contexto y Cursor las carga cuando son relevantes.
 
 ---
 
