@@ -1,6 +1,6 @@
 # Referencia de Comandos
 
-Guía rápida de los 8 skills de kandypedia para trabajo con agentes de IA.
+Guía rápida de los 11 skills de kandypedia para trabajo con agentes de IA.
 
 ---
 
@@ -12,8 +12,11 @@ Guía rápida de los 8 skills de kandypedia para trabajo con agentes de IA.
 | **Proyecto completamente nuevo** | `/desde-cero` |
 | **Migrar servicio legacy a nueva implementación** | `/extraer-reglas` → `/desde-cero` |
 | **Dividir trabajo grande en tareas paralelas** | `/reparto` |
+| **Definir contratos entre tareas paralelas** | `/contrato` |
 | **Configurar espacios de trabajo para múltiples agentes** | `/worktrees` |
 | **Gestionar archivos tocados por varios agentes** | `/archivos-compartidos` |
+| **Implementar con tests primero** | `/tests-primero` |
+| **Revisar código con ojos frescos** | `/revision-independiente` |
 | **Verificar antes de mergear una tarea** | `/antes-del-merge` |
 | **Integrar todas las branches al final** | `/integrar` |
 
@@ -82,7 +85,7 @@ y facilitar el trabajo en paralelo con múltiples agentes.
 
 **Siguiente comando típico:**
 - Si el MVP tiene varias partes independientes → `/reparto`
-- Si es pequeño (una sola pieza) → implementar directamente
+- Si es pequeño (una sola pieza) → `/tests-primero` para implementar
 
 ---
 
@@ -156,8 +159,47 @@ en tareas para trabajar con 4 agentes en paralelo.
 5. Entregables y verificación por tarea
 
 **Siguiente comando típico:**
+- `/contrato` para definir contratos entre tareas
 - `/worktrees` para crear espacios de trabajo
-- `/archivos-compartidos` si hay archivos que varias tareas necesitan
+
+---
+
+### `/contrato`
+
+**Para qué sirve:**
+Definir el contrato exacto (entradas, salidas, errores) de cada punto de unión antes de crear worktrees. Documenta en `docs/contrato.md` y lo commitea a main para que todos los agentes partan de la misma versión.
+
+**Cuándo usarla:**
+- ✅ Ya dividiste el trabajo con `/reparto`
+- ✅ Hay múltiples agentes que necesitan comunicarse entre sí
+- ✅ Necesitas especificar contratos exactos (APIs, funciones, tipos)
+
+**Cuándo NO usarla:**
+- ❌ No dividiste el trabajo todavía (usa `/reparto` primero)
+- ❌ Es una tarea individual sin puntos de unión
+
+**Invocación:**
+```
+/contrato
+
+Tenemos 3 agentes trabajando en paralelo: backend API, frontend UI y reportes.
+Necesito definir los contratos de los endpoints y tipos compartidos antes 
+de que empiecen a codear.
+```
+
+**Qué produce:**
+1. Archivo `docs/contrato.md` con:
+   - Objetivo en 2 líneas
+   - División de trabajo por agente/worktree
+   - Cada punto de unión con entrada, salida, errores y ejemplos
+   - Decisiones tomadas y fuera de alcance
+   - Preguntas abiertas
+2. DETENTE para aprobación del usuario
+3. Commit a `main` del contrato aprobado
+
+**Siguiente comando típico:**
+- Después de aprobar: `/worktrees` para crear espacios de trabajo
+- Dentro de cada worktree: `/tests-primero` usando el contrato como referencia
 
 ---
 
@@ -192,7 +234,8 @@ y branch por cada una: task-1-auth, task-2-products, task-3-ui, task-4-reports
 **Siguiente comando típico:**
 - Asignar cada worktree a un agente
 - Usar `/archivos-compartidos` si aplica
-- Cada agente usa `/antes-del-merge` al terminar
+- Dentro de cada worktree: `/tests-primero` para implementar
+- Cada agente usa `/revision-independiente` y `/antes-del-merge` al terminar
 
 ---
 
@@ -227,7 +270,96 @@ y todas necesitan agregar dependencias a package.json.
 **Siguiente comando típico:**
 - Los no-owners crean `REQUESTS.md` en sus branches
 - El owner aplica cambios antes de mergear
-- Uso de `/integrar` priorizando owners primero
+- Dentro de cada worktree: `/tests-primero` para implementar
+- Al terminar: `/revision-independiente` para revisar
+
+---
+
+## ✅ Calidad
+
+### `/tests-primero`
+
+**Para qué sirve:**
+Implementar código con tests primero: define ejemplos de entrada/salida, escribe tests que fallan, y luego implementa lo mínimo para que pasen.
+
+**Cuándo usarla:**
+- ✅ Ya tienes especificación del requisito (de `/desde-cero` o `/extraer-reglas`)
+- ✅ Estás en tu worktree listo para implementar
+- ✅ Quieres asegurar que el código hace lo que debe
+
+**Cuándo NO usarla:**
+- ❌ Todavía estás en fase de planificación
+- ❌ Es código exploratorio/prototipo
+
+**Invocación:**
+```
+/tests-primero
+
+Voy a implementar la función receiveProduct según el contrato.
+Primero quiero definir los tests.
+```
+
+**Qué produce:**
+1. Explicación del requisito en 3-5 líneas
+2. Al menos 3 ejemplos (entrada/salida/errores, casos frontera)
+3. Suposiciones y dudas
+4. DETENTE para aprobación
+5. Tests escritos (sin implementación)
+6. Tests ejecutados y FALLANDO (confirma que testean algo)
+7. DETENTE para aprobación de tests
+8. Implementación mínima
+9. Tests ejecutados y PASANDO
+10. Resumen de cambios
+
+**Siguiente comando típico:**
+- Continuar implementando más features con el mismo proceso
+- Al terminar la tarea: `/revision-independiente` para revisar
+- Luego `/antes-del-merge`
+
+---
+
+### `/revision-independiente`
+
+**Para qué sirve:**
+Revisar el código con ojos frescos, como si fueras el único revisor. Se ejecuta en un chat NUEVO con modelo diferente para verdadera independencia.
+
+**Cuándo usarla:**
+- ✅ Terminaste de implementar tu tarea
+- ✅ Los tests pasan
+- ✅ Quieres una revisión objetiva antes de mergear
+
+**Cuándo NO usarla:**
+- ❌ Todavía estás implementando
+- ❌ Los tests no pasan
+
+**Invocación:**
+```
+En un NUEVO chat con modelo diferente:
+
+/revision-independiente
+
+Revisa estos cambios:
+[pega diff]
+
+Requisito: @docs/contrato.md
+Reglas: @docs/reglas.md
+```
+
+**Qué produce:**
+1. Revisión en 5 áreas:
+   - Correctitud (¿hace lo que pide?)
+   - Manejo de errores y contratos
+   - Seguridad
+   - Tests (¿qué no está cubierto?)
+   - Legibilidad (solo si afecta de verdad)
+2. Lista de hallazgos con formato:
+   `[Gravedad: alta/media/baja] archivo:línea: problema. Por qué importa. Sugerencia concreta.`
+3. Decisión: aprobar o no aprobar para merge
+
+**Siguiente comando típico:**
+- Corregir hallazgos de gravedad alta
+- Opcionalmente corregir media/baja
+- Usar `/antes-del-merge` para verificar
 
 ---
 
@@ -320,20 +452,28 @@ Todas pasaron /antes-del-merge. Necesito mergearlas a main en el orden correcto.
 
 2. (opcional) /reparto
    → Si es grande, divide en tareas
-   → Si es pequeño, implementa directamente
+   → Si es pequeño, salta al paso 6
 
-3. (si usaste /reparto) /worktrees
+3. /contrato
+   → Define contratos entre tareas
+   → Commitea a main
+
+4. /worktrees
    → Crea espacios de trabajo por tarea
 
-4. (si aplica) /archivos-compartidos
+5. (si aplica) /archivos-compartidos
    → Coordina archivos tocados por varias tareas
 
-5. Implementación (en paralelo si hay worktrees)
+6. En cada worktree: /tests-primero
+   → Implementa con tests primero
 
-6. /antes-del-merge (cada tarea)
+7. /revision-independiente (chat nuevo, modelo diferente)
+   → Revisa cada tarea objetivamente
+
+8. /antes-del-merge (cada tarea)
    → Verifica calidad antes de mergear
 
-7. /integrar (si hay múltiples branches)
+9. /integrar (si hay múltiples branches)
    → Mergea todo en orden correcto
 ```
 
@@ -350,20 +490,28 @@ Todas pasaron /antes-del-merge. Necesito mergearlas a main en el orden correcto.
 
 2. (opcional) /reparto
    → Si el MVP es grande, divide en tareas
-   → Si es pequeño, implementa directamente
+   → Si es pequeño, salta al paso 6
 
-3. (si usaste /reparto) /worktrees
+3. /contrato
+   → Define contratos entre tareas
+   → Commitea a main
+
+4. /worktrees
    → Crea espacios de trabajo por tarea
 
-4. (si aplica) /archivos-compartidos
+5. (si aplica) /archivos-compartidos
    → Coordina archivos compartidos
 
-5. Implementación (en paralelo si hay worktrees)
+6. En cada worktree: /tests-primero
+   → Implementa con tests primero
 
-6. /antes-del-merge (cada tarea)
+7. /revision-independiente (chat nuevo, modelo diferente)
+   → Revisa cada tarea objetivamente
+
+8. /antes-del-merge (cada tarea)
    → Verifica calidad
 
-7. /integrar (si hay múltiples branches)
+9. /integrar (si hay múltiples branches)
    → Mergea todo
 ```
 
@@ -390,20 +538,28 @@ Todas pasaron /antes-del-merge. Necesito mergearlas a main en el orden correcto.
 4. (opcional) /reparto
    → Si es grande, divide la implementación
 
-5. (si usaste /reparto) /worktrees
+5. /contrato
+   → Define contratos entre tareas
+   → Commitea a main
+
+6. /worktrees
    → Espacios de trabajo por tarea
 
-6. (si aplica) /archivos-compartidos
+7. (si aplica) /archivos-compartidos
    → Coordina overlaps
 
-7. Implementación con tests por cada regla
-   → Usa el checklist de verificación de reglas.md
+8. En cada worktree: /tests-primero
+   → Implementa con tests derivados de reglas.md
+   → Referencia IDs de regla (R-001...) en tests
 
-8. /antes-del-merge (cada tarea)
-   → Verifica que pasaron tests de reglas
+9. /revision-independiente (chat nuevo, modelo diferente)
+   → Revisa cada tarea contra contrato y reglas
 
-9. /integrar
-   → Mergea todo y verifica end-to-end
+10. /antes-del-merge (cada tarea)
+    → Verifica que pasaron tests de reglas
+
+11. /integrar
+    → Mergea todo y verifica end-to-end
 ```
 
 **Ejemplo:**

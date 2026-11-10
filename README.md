@@ -15,7 +15,7 @@ Nunca empieces un proyecto escribiendo código. Primero:
 
 Estos skills te guían paso a paso en ese proceso.
 
-## Skills disponibles
+## Skills disponibles (11 total)
 
 > 📖 **[Ver referencia completa de comandos](docs/comandos.md)** con ejemplos de uso, flujos típicos e instalación en Cursor.
 
@@ -45,6 +45,11 @@ Divide un proyecto en tareas independientes que pueden ejecutarse en paralelo po
 
 **Úsala cuando:** el trabajo es demasiado grande para un solo agente y puede paralelizarse.
 
+#### [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md)
+Define el contrato exacto (entradas, salidas, errores) de cada punto de unión antes de crear worktrees.
+
+**Úsala cuando:** después de `/reparto` y antes de `/worktrees`, necesitas especificar cómo se comunican las partes.
+
 #### [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md)
 Configura worktrees de git (uno por tarea) para que varios agentes trabajen sin pisarse.
 
@@ -67,36 +72,56 @@ Mergea todas las branches paralelas en el orden correcto, resuelve conflictos y 
 
 ---
 
+### ✅ Calidad
+
+#### [`/tests-primero`](skills/calidad/tests-primero/SKILL.md)
+Define ejemplos de entrada/salida, escribe tests que fallan, y luego implementa lo mínimo para que pasen.
+
+**Úsala cuando:** vas a implementar código en tu worktree y quieres asegurar que funciona correctamente.
+
+#### [`/revision-independiente`](skills/calidad/revision-independiente/SKILL.md)
+Revisa el código con ojos frescos en un chat nuevo con modelo diferente, como si fueras el único revisor.
+
+**Úsala cuando:** terminaste tu implementación y quieres una revisión objetiva antes de mergear.
+
+---
+
 ## Orden recomendado
 
 ### Para código existente:
 1. [`/analizar-existente`](skills/planificacion/analizar-existente/SKILL.md) → diagnóstico del código actual
 2. [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md) → dividir en tareas
-3. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → crear espacios de trabajo
-4. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
-5. Trabajar en paralelo (cada agente en su worktree)
-6. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar cada tarea
-7. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
+3. [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md) → definir contratos entre partes
+4. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → crear espacios de trabajo
+5. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
+6. En cada worktree: [`/tests-primero`](skills/calidad/tests-primero/SKILL.md) → implementar con tests
+7. [`/revision-independiente`](skills/calidad/revision-independiente/SKILL.md) → revisar cada tarea
+8. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar cada tarea
+9. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
 
 ### Para proyectos nuevos:
 1. [`/desde-cero`](skills/planificacion/desde-cero/SKILL.md) → especificación mínima
 2. [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md) → dividir en tareas
-3. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → crear espacios de trabajo
-4. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
-5. Trabajar en paralelo (cada agente en su worktree)
-6. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar cada tarea
-7. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
+3. [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md) → definir contratos entre partes
+4. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → crear espacios de trabajo
+5. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
+6. En cada worktree: [`/tests-primero`](skills/calidad/tests-primero/SKILL.md) → implementar con tests
+7. [`/revision-independiente`](skills/calidad/revision-independiente/SKILL.md) → revisar cada tarea
+8. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar cada tarea
+9. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
 
 ### Para migraciones de legacy:
 1. [`/extraer-reglas`](skills/planificacion/extraer-reglas/SKILL.md) → documentar reglas del legacy en `reglas.md`
 2. Revisar reglas con experto de dominio → resolver dudas
 3. [`/desde-cero`](skills/planificacion/desde-cero/SKILL.md) con `@reglas.md` → especificar nuevo servicio
 4. [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md) → dividir implementación
-5. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → espacios de trabajo
-6. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
-7. Implementar con tests por cada regla
-8. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar
-9. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
+5. [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md) → definir contratos
+6. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → espacios de trabajo
+7. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
+8. En cada worktree: [`/tests-primero`](skills/calidad/tests-primero/SKILL.md) con tests por cada regla
+9. [`/revision-independiente`](skills/calidad/revision-independiente/SKILL.md) → revisar cada tarea
+10. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar
+11. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
 
 ---
 
@@ -169,16 +194,23 @@ kandypedia-skills/
     │   │   └── SKILL.md
     │   └── extraer-reglas/
     │       └── SKILL.md
-    └── trabajo-paralelo/
-        ├── reparto/
+    ├── trabajo-paralelo/
+    │   ├── reparto/
+    │   │   └── SKILL.md
+    │   ├── contrato/
+    │   │   └── SKILL.md
+    │   ├── worktrees/
+    │   │   └── SKILL.md
+    │   ├── archivos-compartidos/
+    │   │   └── SKILL.md
+    │   ├── antes-del-merge/
+    │   │   └── SKILL.md
+    │   └── integrar/
+    │       └── SKILL.md
+    └── calidad/
+        ├── tests-primero/
         │   └── SKILL.md
-        ├── worktrees/
-        │   └── SKILL.md
-        ├── archivos-compartidos/
-        │   └── SKILL.md
-        ├── antes-del-merge/
-        │   └── SKILL.md
-        └── integrar/
+        └── revision-independiente/
             └── SKILL.md
 ```
 
