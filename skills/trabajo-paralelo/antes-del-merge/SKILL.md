@@ -5,6 +5,11 @@ description: Usa esta skill antes de mergear tu branch. Verifica que tu tarea es
 
 # Antes del Merge
 
+> **De dónde sale.** Le pedí a un agente que añadiera dos tipografías. Reescribió el archivo de entrada
+> entero y se llevó por delante el punto donde se monta la aplicación. No hubo conflictos, porque no había
+> con quién chocar. El build pasó y Vercel salió en verde. Y la web estaba caída. Ese día revisé después de
+> subir, no antes. Esta lista es lo que reviso ahora, antes.
+
 ## ¿Cuándo usar esta skill?
 
 Úsala cuando:

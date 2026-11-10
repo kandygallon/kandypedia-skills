@@ -5,6 +5,12 @@ description: Usa esta skill para configurar worktrees de git, uno por tarea para
 
 # Worktrees
 
+> **De dónde sale.** Probé Multitask, la función de Cursor para lanzar varias tareas a la vez, con dos
+> encargos sobre el mismo archivo: añadir un gráfico debajo del título y quitar todo lo de debajo del título
+> para poner un login. No hubo error ni conflicto. El agente se quedó con el login, dejó el gráfico fuera y
+> solo lo explicó en su razonamiento. Con un worktree por agente, cada uno trabaja en su propia copia, y si
+> dos chocan lo ves al juntar las ramas. No lo decide un agente por ti sin avisar.
+
 ## ¿Cuándo usar esta skill?
 
 Úsala cuando:
