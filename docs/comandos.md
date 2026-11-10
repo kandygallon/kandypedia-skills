@@ -572,64 +572,31 @@ Todas pasaron /antes-del-merge. Necesito mergearlas a main en el orden correcto.
 
 ### Opción 1: Instalación global (recomendado)
 
-Instala los skills en tu directorio personal de Cursor para usarlos en todos tus proyectos:
-
 ```bash
-# Clonar el repositorio
-git clone https://github.com/kandygallon/kandypedia-skills.git
-
-# Crear directorio de skills global si no existe
-mkdir -p ~/.cursor/skills
-
-# Copiar todos los skills
-cp -R kandypedia-skills/skills/*/* ~/.cursor/skills/
-
-# Verificar
-ls ~/.cursor/skills/
-# Deberías ver: analizar-existente, desde-cero, extraer-reglas, reparto, 
-# worktrees, archivos-compartidos, antes-del-merge, integrar
+git clone https://github.com/kandygallon/kandypedia-skills.git ~/.cursor/skills/kandypedia
 ```
 
-**Ventaja de instalación global:**
-- ✅ Los skills NO se commitean al repositorio de tu empleador
-- ✅ Disponibles en todos tus proyectos
-- ✅ Actualizas una sola vez para todos los proyectos
+Cursor busca skills en `~/.cursor/skills/` y entra en las subcarpetas, así que no hay nada que configurar.
+Escribe `/` en el chat del agente: deberías ver las 11. Si no aparecen, reinicia Cursor.
 
-**Configurar en Cursor:**
-1. Ve a **Settings** → **Cursor Settings** → **Features**
-2. En **Skill directories**, agrega: `~/.cursor/skills`
-3. Reinicia Cursor
+**Ventajas:**
+- ✅ Las skills NO se commitean al repositorio de tu empleador
+- ✅ Disponibles en todos tus proyectos
+- ✅ Se actualizan con `git -C ~/.cursor/skills/kandypedia pull`
 
 ### Opción 2: Instalación por proyecto
 
-Si prefieres tener los skills en el proyecto (y commitearlos al repo):
+Si prefieres tener las skills en el proyecto (y commitearlas al repo):
 
 ```bash
 # Dentro de tu proyecto
+git clone https://github.com/kandygallon/kandypedia-skills.git /tmp/kandypedia-skills
 mkdir -p .cursor/skills
+cp -R /tmp/kandypedia-skills/skills/*/* .cursor/skills/
 
-# Copiar skills
-cp -R /path/to/kandypedia-skills/skills/*/* .cursor/skills/
-
-# Agregar al .gitignore si NO quieres commitearlos
+# Agrégalo al .gitignore si NO quieres commitearlas
 echo ".cursor/skills/" >> .gitignore
 ```
-
-**Configurar en Cursor:**
-1. Ve a **Settings** → **Cursor Settings** → **Features**
-2. En **Skill directories**, agrega: `.cursor/skills`
-
-### Opción 3: Referenciar por URL (sin instalación)
-
-Puedes invocar skills directamente por URL:
-
-```
-@https://raw.githubusercontent.com/kandygallon/kandypedia-skills/main/skills/planificacion/analizar-existente/SKILL.md
-```
-
-**Ventaja:** No necesitas instalar nada.
-
-**Desventaja:** URLs largas, menos conveniente.
 
 ---
 
