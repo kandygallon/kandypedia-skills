@@ -119,7 +119,7 @@ Si es vago ("que funcione"), pide un caso concreto:
 
 ## Especificación mínima
 
-Después de las preguntas, produce un documento corto:
+Después de las preguntas, produce un documento corto y **guárdalo en `docs/especificacion.md`**:
 
 ```markdown
 # Especificación: [nombre del proyecto]
@@ -161,6 +161,8 @@ Después de las preguntas, produce un documento corto:
 
 Recomendación: [cuál y por qué]
 ```
+
+**DETENTE.** Presenta la especificación al usuario y espera su aprobación antes de pasar a `/reparto`. El alcance, lo que queda fuera y la definición de hecho son decisiones del usuario, no del agente.
 
 ## Ejemplo de uso completo
 

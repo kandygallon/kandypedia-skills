@@ -114,14 +114,14 @@ todas las reglas de validación, cálculos y efectos secundarios.
 ```
 
 **Qué produce:**
-1. Documento `reglas.md` con reglas numeradas (R-001, R-002...)
+1. Documento `docs/reglas.md` con reglas numeradas (R-001, R-002...)
 2. Cada regla con: descripción, ubicación en legacy, ejemplos, edge cases, estado (mantener/cambiar/eliminar)
 3. Dudas para expertos de dominio (D-001, D-002...)
 4. Checklist de verificación mapeando reglas a test cases
 
 **Siguiente comando típico:**
 - Revisar dudas con experto de dominio
-- Usar `/desde-cero` con `@reglas.md` como base
+- Usar `/desde-cero` con `@docs/reglas.md` como base
 
 ---
 
@@ -525,14 +525,14 @@ Todas pasaron /antes-del-merge. Necesito mergearlas a main en el orden correcto.
 ```
 1. /extraer-reglas
    → Documenta todas las reglas de negocio del legacy
-   → Produce reglas.md con R-001, R-002...
+   → Produce docs/reglas.md con R-001, R-002...
    → Lista dudas para expertos (D-001, D-002...)
 
 2. Revisar reglas con experto de dominio
    → Resuelve dudas
    → Marca cada regla: mantener/cambiar/eliminar
 
-3. /desde-cero (con @reglas.md)
+3. /desde-cero (con @docs/reglas.md)
    → Especifica el nuevo servicio respetando reglas
 
 4. (opcional) /reparto
@@ -549,7 +549,7 @@ Todas pasaron /antes-del-merge. Necesito mergearlas a main en el orden correcto.
    → Coordina overlaps
 
 8. En cada worktree: /tests-primero
-   → Implementa con tests derivados de reglas.md
+   → Implementa con tests derivados de docs/reglas.md
    → Referencia IDs de regla (R-001...) en tests
 
 9. /revision-independiente (chat nuevo, modelo diferente)

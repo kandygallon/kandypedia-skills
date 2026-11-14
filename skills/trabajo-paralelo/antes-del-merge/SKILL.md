@@ -37,7 +37,7 @@ Si todos los agentes siguen este checklist, la integración final será mucho m�
 
 **Cómo verificar:**
 
-Lee el plan de reparto de tu tarea:
+Lee tu tarea en `docs/reparto.md`:
 
 ```markdown
 #### Tarea 2: API de Productos
@@ -55,6 +55,12 @@ curl http://localhost:3000/api/products
 curl -X POST http://localhost:3000/api/products -d '{"name":"Test"}' -H "Content-Type: application/json"
 # Debe crear un producto
 ```
+
+**Y además, abre la app y úsala.** Que pasen el build y los tests no basta:
+
+- Levanta el proyecto y abre la pantalla o la ruta que tocaste.
+- Comprueba que carga, que se ve y que hace lo que tiene que hacer.
+- Si es una web, mira también la consola del navegador: un error ahí puede dejar la página en blanco con el build en verde.
 
 Si algo no funciona, **no merges todavía**. Arréglalo primero.
 
@@ -203,19 +209,7 @@ asdf
 cambios
 ```
 
-**Si tus commits son malos**, puedes reescribir la historia (solo si no has pusheado):
-
-```bash
-git rebase -i origin/main
-# Marca commits para "reword" (cambiar mensaje) o "squash" (combinar)
-```
-
-**O haz un squash commit:**
-
-```bash
-git reset --soft origin/main
-git commit -m "feat(products): implementa API REST de productos completa"
-```
+**Si tus commits son malos**, dile al usuario cuáles y por qué, y que él decida. **No reescribas la historia por tu cuenta:** `git rebase -i` es interactivo (un agente no puede usarlo) y `git reset --soft` reescribe la branch. Si el usuario quiere juntar los commits, lo puede hacer al mergear con *squash*.
 
 ### ✅ 7. La branch está actualizada con main
 
@@ -303,7 +297,8 @@ git push
 Antes de mergear, verifica:
 
 ```markdown
-- [ ] Mi tarea funciona (lo probé manual o con tests)
+- [ ] Abrí la app y la pantalla que toqué funciona (no solo el build)
+- [ ] Mi tarea cumple lo que dice `docs/reparto.md`
 - [ ] Los tests pasan
 - [ ] El linter no se queja de mi código
 - [ ] Solo modifiqué archivos asignados a mi tarea

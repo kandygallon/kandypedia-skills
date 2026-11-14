@@ -60,12 +60,14 @@ Asegúrate de estar en una branch limpia (sin cambios sin commitear):
 git status
 ```
 
-Si hay cambios, commitealos o guárdalos:
+**Los documentos del plan tienen que estar commiteados en `main`.** Un worktree nuevo solo ve lo que está commiteado: si `docs/reparto.md` o `docs/contrato.md` no lo están, los agentes no los tienen.
 
 ```bash
-git add .
-git commit -m "wip: guardar antes de crear worktrees"
+git add docs/
+git commit -m "docs: plan de reparto y contrato antes de los worktrees"
 ```
+
+**Nunca uses `git add .` aquí**: podrías commitear un `.env` con claves. Añade los archivos por su nombre.
 
 ### 2. Crear un worktree por tarea
 
@@ -108,6 +110,17 @@ Después de crear los worktrees:
 Cada directorio es **el mismo repo**, pero con una branch diferente activa.
 
 ### 4. Asignar tareas a agentes
+
+**Prepara cada worktree antes de lanzar a su agente.** Git no copia lo que no está commiteado, así que cada worktree empieza **sin dependencias instaladas y sin `.env`**:
+
+```bash
+cd ../proyecto-task-1
+npm install             # o el comando del proyecto
+cp ../proyecto/.env .   # solo si el proyecto lo necesita
+git check-ignore .env   # debe responder ".env": así no se commitea
+```
+
+Si `git check-ignore .env` no responde nada, **detente**: añade `.env` al `.gitignore` antes de seguir.
 
 Ahora puedes:
 - Abrir un agente de Cursor en `proyecto-task-1/` con la instrucción de Tarea 1

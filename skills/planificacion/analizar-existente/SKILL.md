@@ -87,7 +87,7 @@ Haz las preguntas **una por una**, espera la respuesta, y ajusta las siguientes 
 
 ### 3. Diagnóstico escrito
 
-Produce un documento corto (markdown) con:
+Produce un documento corto y **guárdalo en `docs/diagnostico.md`**:
 
 ```markdown
 # Diagnóstico: [nombre del flujo o módulo]
@@ -133,7 +133,9 @@ Lista aparte de preguntas que no pudiste resolver:
 3. ¿Hay algún cliente externo que consuma este JSON directamente?
 ```
 
-Estas dudas deben ser **específicas y accionables**, no genéricas.
+Estas dudas deben ser **específicas y accionables**, no genéricas. Ponlas al final de `docs/diagnostico.md`.
+
+**DETENTE.** Presenta el diagnóstico y las dudas al usuario y espera sus respuestas antes de proponer cambios.
 
 ## Ejemplo de uso
 

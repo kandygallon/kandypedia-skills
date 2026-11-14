@@ -154,7 +154,7 @@ Reglas implícitas:
 - Si supplier.region == "LATAM", usa exchange_rate de config
 ```
 
-### 3. Documenta cada regla en `reglas.md`
+### 3. Documenta cada regla en `docs/reglas.md`
 
 Para cada regla que encuentres, escribe una entrada numerada:
 
@@ -321,9 +321,9 @@ Esta lista mapea cada regla a un test case que debe pasar en el nuevo servicio.
 
 ### 7. Sugerencia de continuación
 
-Al terminar el documento `reglas.md`, di al usuario:
+Al terminar el documento `docs/reglas.md`, di al usuario:
 
-> "✅ Documento de reglas completado: `[ruta/reglas.md]`
+> "✅ Documento de reglas completado: `docs/reglas.md`
 > 
 > **Próximos pasos sugeridos:**
 > 
@@ -332,7 +332,7 @@ Al terminar el documento `reglas.md`, di al usuario:
 > 3. **Usar `/desde-cero`** para especificar el nuevo servicio:
 >    ```
 >    /desde-cero
->    Usa @reglas.md como base para las reglas de negocio
+>    Usa @docs/reglas.md como base para las reglas de negocio
 >    ```
 > 
 > La especificación del nuevo servicio debe respetar las reglas marcadas como "Mantener" y documentar las que marcaste como "Cambiar"."
@@ -614,7 +614,7 @@ setTimeout(() => {
 
 Al terminar de usar esta skill, debes tener:
 
-1. ✅ Un **documento `reglas.md`** con todas las reglas numeradas (R-001, R-002...)
+1. ✅ Un **documento `docs/reglas.md`** con todas las reglas numeradas (R-001, R-002...)
 2. ✅ Cada regla con: descripción, ubicación en legacy, entrada/salida, edge cases, estado
 3. ✅ **Dudas documentadas** para expertos de dominio (D-001, D-002...)
 4. ✅ **Checklist de verificación** mapeando reglas a test cases
@@ -625,7 +625,7 @@ Al terminar de usar esta skill, debes tener:
 Después de extraer las reglas:
 1. **Revisar con experto de dominio**: resuelve las dudas marcadas
 2. **Marcar estado de cada regla**: mantener / cambiar / eliminar / por confirmar
-3. **Usar `/desde-cero`** con `@reglas.md` como input para especificar el nuevo servicio
+3. **Usar `/desde-cero`** con `@docs/reglas.md` como input para especificar el nuevo servicio
 4. Si el nuevo servicio es grande, usa `/reparto` para dividir la implementación
 
 ## Notas importantes

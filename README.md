@@ -111,9 +111,9 @@ Revisa el código con ojos frescos en un chat nuevo con modelo diferente, como s
 9. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
 
 ### Para migraciones de legacy:
-1. [`/extraer-reglas`](skills/planificacion/extraer-reglas/SKILL.md) → documentar reglas del legacy en `reglas.md`
+1. [`/extraer-reglas`](skills/planificacion/extraer-reglas/SKILL.md) → documentar reglas del legacy en `docs/reglas.md`
 2. Revisar reglas con experto de dominio → resolver dudas
-3. [`/desde-cero`](skills/planificacion/desde-cero/SKILL.md) con `@reglas.md` → especificar nuevo servicio
+3. [`/desde-cero`](skills/planificacion/desde-cero/SKILL.md) con `@docs/reglas.md` → especificar nuevo servicio
 4. [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md) → dividir implementación
 5. [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md) → definir contratos
 6. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → espacios de trabajo

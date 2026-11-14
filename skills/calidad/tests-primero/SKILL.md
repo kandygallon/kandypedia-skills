@@ -238,7 +238,7 @@ npm test
 > La función `receiveProduct` recibe un productId y una quantity, valida que ambos sean válidos, aumenta el stock del producto, y devuelve el nuevo stock y un receipt. Debe rechazar quantity <= 0 y productos inexistentes.
 
 **Paso 2: Ejemplos**
-> [Lista los 4 ejemplos como arriba, referenciando R-001, R-002, R-010 si existe reglas.md]
+> [Lista los 4 ejemplos como arriba, referenciando R-001, R-002, R-010 si existe docs/reglas.md]
 
 **Paso 3: Suposiciones y dudas**
 > [Lista suposiciones y dudas como arriba]
@@ -321,4 +321,4 @@ Después de usar tests-primero:
 - **Ejemplos aprobados son sagrados**: no los cambies sin permiso
 - **Implementación mínima**: no agregues features extra "por si acaso"
 - **DETENTE dos veces**: después de ejemplos y después de tests
-- **Si existe reglas.md**: usa las reglas como fuente de verdad y referéncialas en los tests
+- **Si existe docs/reglas.md**: usa las reglas como fuente de verdad y referéncialas en los tests

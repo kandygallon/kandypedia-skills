@@ -34,7 +34,7 @@ Revisa los cambios de esta rama (o el diff que te indique) como si fueras el ún
 ## Reglas
 
 - **No leas ni tomes en cuenta** revisiones previas, comentarios de otros agentes ni conclusiones anteriores de este chat.
-- **Basa tu revisión solo en**: el código, el requisito (contrato.md o reglas.md), y los tests.
+- **Basa tu revisión solo en**: el código, el requisito (contrato.md o docs/reglas.md), y los tests.
 
 ## Orden de revisión
 
@@ -93,7 +93,7 @@ Una lista numerada:
 
 1. [Gravedad: alta] src/services/inventory.service.ts:45: No valida que quantity sea un número entero, acepta decimales. Por qué importa: el contrato especifica solo enteros. Sugerencia: agregar validación `if (!Number.isInteger(quantity))` antes de procesar.
 
-2. [Gravedad: alta] src/services/inventory.service.ts:67: No maneja el caso donde el producto existe pero está archivado (R-050). Por qué importa: reglas.md especifica que productos archivados deben rechazarse. Sugerencia: agregar check `if (product.archived)` y lanzar error 404.
+2. [Gravedad: alta] src/services/inventory.service.ts:67: No maneja el caso donde el producto existe pero está archivado (R-050). Por qué importa: docs/reglas.md especifica que productos archivados deben rechazarse. Sugerencia: agregar check `if (product.archived)` y lanzar error 404.
 
 3. [Gravedad: media] src/services/inventory.service.ts:52: No hay test para el caso donde quantity es Number.MAX_SAFE_INTEGER. Por qué importa: caso frontera que podría causar overflow. Sugerencia: agregar test con valor extremo.
 
@@ -176,7 +176,7 @@ El agente original o el usuario decidirán qué hacer con el reporte.
 
 ✅ La función `receiveProduct` implementa el flujo básico correctamente según contrato.md.
 
-❌ Problema: no implementa la regla R-011 (descuento por volumen) documentada en reglas.md como "Mantener".
+❌ Problema: no implementa la regla R-011 (descuento por volumen) documentada en docs/reglas.md como "Mantener".
 
 ✅ Los casos frontera básicos están cubiertos.
 
@@ -222,7 +222,7 @@ El agente original o el usuario decidirán qué hacer con el reporte.
 
 ## Hallazgos
 
-1. [Gravedad: alta] src/services/inventory.service.ts:45-67: No implementa la regla R-011 de descuento por volumen. Por qué importa: reglas.md la marca como "Mantener" y es requisito documentado. Sugerencia: agregar lógica `if (quantity >= 100) { applyDiscount(0.05) }` según reglas.md líneas 89-95.
+1. [Gravedad: alta] src/services/inventory.service.ts:45-67: No implementa la regla R-011 de descuento por volumen. Por qué importa: docs/reglas.md la marca como "Mantener" y es requisito documentado. Sugerencia: agregar lógica `if (quantity >= 100) { applyDiscount(0.05) }` según docs/reglas.md líneas 89-95.
 
 2. [Gravedad: alta] src/services/inventory.service.ts:82: Lanza error 400 para SKU duplicado, pero contrato.md especifica 409 Conflict. Por qué importa: inconsistencia con contrato que otros servicios/UI esperan. Sugerencia: cambiar a `throw new ConflictError('DUPLICATE_SKU', ...)`.
 
@@ -268,4 +268,4 @@ Después de la revisión independiente:
 - **Usa el formato estricto**: `[Gravedad] archivo:línea: problema. Por qué. Sugerencia.`
 - **Sé objetivo**: no defiendas ni ataques, solo evalúa contra requisitos
 - **Gravedad alta bloquea merge**: si hay alta, debe corregirse antes de integrar
-- **Si existe contrato.md o reglas.md**: son la fuente de verdad, el código debe cumplirlos
+- **Si existe contrato.md o docs/reglas.md**: son la fuente de verdad, el código debe cumplirlos

@@ -118,7 +118,7 @@ Tarea D (depende de B y C) --> empieza después de B y C
 
 ### 5. Produce el plan de reparto
 
-Escribe el plan en markdown:
+Escribe el plan en markdown y **guárdalo en `docs/reparto.md`**. Los agentes de cada worktree lo van a leer de ahí:
 
 ```markdown
 # Plan de Reparto: [nombre del proyecto]
@@ -168,6 +168,16 @@ Escribe el plan en markdown:
 1. Tarea 1 y Tarea 2 (sin conflictos esperados)
 2. Tarea 3 (puede tener conflictos con Tarea 1, resolver manual)
 ```
+
+### 6. DETENTE y pide aprobación
+
+Presenta el plan al usuario y **espera su aprobación** antes de seguir. Pregúntale en concreto lo que el plan no puede decidir solo:
+
+- Archivos o secciones **sin dueño claro**: ¿de qué tarea son?
+- Textos o piezas **repetidas en dos sitios**: ¿cuál se queda?
+- Partes que **quizá ya no tienen sentido**: ¿se hacen o se quitan?
+
+Son decisiones de negocio, no técnicas. Cuando el usuario apruebe, **commitea `docs/reparto.md` en `main`** antes de pasar a `/worktrees`: un worktree solo ve lo que está commiteado.
 
 ## Ejemplo completo
 
@@ -265,7 +275,7 @@ Dividimos el trabajo en 5 tareas: 2 en paralelo inmediato (autenticación y mode
 
 Al terminar de usar esta skill, debes tener:
 
-1. ✅ Un **plan de reparto** con tareas numeradas
+1. ✅ Un **plan de reparto** con tareas numeradas, en `docs/reparto.md`, **aprobado por el usuario y commiteado en `main`**
 2. ✅ **Archivos asignados** a cada tarea (claros y sin overlap)
 3. ✅ **Dependencias** explícitas entre tareas
 4. ✅ **Rondas de ejecución** (qué va en paralelo, qué espera)

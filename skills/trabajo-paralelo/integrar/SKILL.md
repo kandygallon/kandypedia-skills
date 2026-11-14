@@ -10,7 +10,7 @@ description: Usa esta skill para mergear todas las branches paralelas en el orde
 Úsala cuando:
 - Todas las tareas paralelas terminaron (cada una pasó `/antes-del-merge`)
 - Tienes múltiples branches listas para mergear
-- Necesitas integrar todo en la branch principal
+- Necesitas juntar todo y llevarlo a la branch principal
 - Quieres verificar que el sistema completo funciona
 
 **No la uses** cuando:
@@ -26,6 +26,8 @@ La integración es el momento de verdad: el código que funcionaba por separado 
 
 Esta skill te guía para integrar todo en el **orden correcto**, **resolver conflictos** y **verificar** que el resultado final funciona.
 
+**Regla de oro: `main` no se toca hasta que el usuario lo apruebe.** Todo se integra primero en una branch `integracion`. Si algo sale mal, `main` sigue intacto y basta con borrar esa branch.
+
 ## Proceso paso a paso
 
 ### 1. Preparación
@@ -36,12 +38,13 @@ Esta skill te guía para integrar todo en el **orden correcto**, **resolver conf
 2. Todas las branches están pusheadas al remoto
 3. Tienes el plan de reparto a mano (para saber el orden)
 
-**Ubícate en el repo principal:**
+**Ubícate en el repo principal y crea la branch de integración:**
 
 ```bash
 cd ~/proyecto  # El worktree principal, no los auxiliares
 git checkout main
-git pull origin main  # Asegúrate de tener la última versión
+git pull origin main          # Asegúrate de tener la última versión
+git checkout -b integracion   # Aquí se junta todo. main no se toca
 ```
 
 ### 2. Determina el orden de merge
@@ -77,7 +80,9 @@ Orden de merge:
 2. Tarea 3 (puede tener conflictos con Tarea 1, resolver manual)
 ```
 
-### 3. Mergea la primera branch
+**DETENTE.** Presenta al usuario el orden de merge que propones y por qué. Espera su confirmación antes de mergear nada.
+
+### 3. Mergea la primera branch (en `integracion`)
 
 ```bash
 git merge task-1-setup
@@ -143,7 +148,7 @@ const port = 5000;
 **Cómo resolver:**
 
 1. **Entiende qué hace cada versión:**
-   - `HEAD`: el código actual en tu branch (main después de merges previos)
+   - `HEAD`: el código actual en `integracion` (con los merges previos)
    - `task-2-products`: el código de la branch que estás mergeando
 
 2. **Decide qué quieres:**
@@ -209,7 +214,7 @@ git push origin task-1-setup
 3. Ahora mergea la branch owner (ya tiene todo):
 
 ```bash
-git checkout main
+git checkout integracion
 git merge task-1-setup
 ```
 
@@ -250,31 +255,45 @@ npm start
 - Ve la lista de productos en la UI (Tarea 3)
 - Genera un reporte (Tarea 4)
 
-Si algo no funciona, identifica qué merge lo rompió y revierte:
+Si algo no funciona, identifica qué merge lo rompió y revierte **en `integracion`**:
 
 ```bash
-git log --oneline -10  # Ve los últimos merges
-git revert <commit-sha>  # Revierte el merge problemático
-# O restaura main:
-git reset --hard origin/main  # CUIDADO: pierdes los merges
+git log --oneline -10    # Ve los últimos merges
+git revert -m 1 <commit-sha>  # Revierte el merge problemático
 ```
 
-### 8. Pushea la integración
-
-Si todo funciona:
+Si es más fácil empezar de cero, **pregunta antes al usuario** y luego borra solo la branch de integración. `main` sigue intacto:
 
 ```bash
+git checkout main
+git branch -D integracion
+```
+
+**Nunca uses `git reset --hard` sobre `main`.**
+
+### 8. DETENTE y pide aprobación para llevarlo a `main`
+
+Cuando todo funciona en `integracion`, **no mergees a `main` todavía**:
+
+1. Escribe el reporte del paso 10.
+2. Preséntaselo al usuario: qué se integró, qué conflictos hubo y cómo lo verificaste.
+3. **Espera su aprobación.** Si el proyecto usa pull requests, en vez de mergear crea un PR de `integracion` hacia `main` y deja que lo apruebe el usuario.
+
+Solo con la aprobación explícita del usuario:
+
+```bash
+git checkout main
+git merge --no-ff integracion
 git push origin main
 ```
 
 **Antes de pushear, considera:**
 - ¿Hay CI/CD? Espera a que pase
-- ¿Hay code review? Crea un PR de la branch de integración
 - ¿Es producción? Verifica en staging primero
 
 ### 9. Limpia worktrees y branches
 
-Después de un push exitoso:
+Después de un push exitoso, **y preguntando antes al usuario**, porque borrar branches remotas no tiene vuelta atrás:
 
 ```bash
 # Elimina worktrees
@@ -422,13 +441,14 @@ git rebase task-1-setup
 
 ```markdown
 - [ ] Todas las tareas pasaron /antes-del-merge
-- [ ] Estoy en main y tengo la última versión
-- [ ] Determiné el orden de merge según dependencias
+- [ ] Creé la branch `integracion` desde main actualizado
+- [ ] Determiné el orden de merge y el usuario lo confirmó
 - [ ] Mergeé cada branch una por una
 - [ ] Resolví conflictos (si hubo)
 - [ ] Verifiqué después de cada merge (tests, linter)
 - [ ] Ejecuté el proyecto completo end-to-end
 - [ ] Todas las funcionalidades trabajan juntas
+- [ ] El usuario aprobó llevarlo a main (o el PR)
 - [ ] Hice push a main
 - [ ] Limpié worktrees y branches
 - [ ] Documenté la integración
@@ -438,7 +458,7 @@ git rebase task-1-setup
 
 Al terminar de usar esta skill, debes tener:
 
-1. ✅ Todas las branches **integradas en main**
+1. ✅ Todas las branches **integradas en `integracion`** y, con aprobación del usuario, **en main**
 2. ✅ **Conflictos resueltos** (si hubo)
 3. ✅ **Tests pasando** en la integración completa
 4. ✅ **Proyecto funcional** end-to-end
@@ -458,4 +478,4 @@ Después de la integración exitosa:
 - **Mergea una branch a la vez**: no hagas `git merge branch-1 branch-2 branch-3` de golpe
 - **Verifica después de cada merge**: detecta problemas temprano
 - **Documenta las resoluciones**: el próximo que integre te lo agradecerá
-- **Si algo sale muy mal, puedes empezar de nuevo**: `git reset --hard origin/main` y vuelve a intentar (solo antes de pushear)
+- **Si algo sale muy mal, puedes empezar de nuevo**: pregunta al usuario y borra la branch `integracion`. `main` sigue intacto
