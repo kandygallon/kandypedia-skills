@@ -1,9 +1,9 @@
 ---
 name: archivos-compartidos
-description: Usa esta skill para gestionar archivos que varios agentes necesitan modificar, evitando conflictos y sobrescrituras.
+description: Da un solo dueño a cada archivo que varias tareas paralelas necesitan tocar (rutas, dependencias, estilos, tipos, traducciones) y fija cómo piden cambios las demás. Úsala al repartir el trabajo o cuando necesitas cambiar un archivo que no es tuyo.
 ---
 
-# Archivos Compartidos
+# Archivos compartidos
 
 > **De dónde sale.** En el rediseño de kandypedia.com, los cuatro agentes iban a tocar el mismo archivo:
 > `translations.js`, con todos los textos del sitio en tres idiomas. Antes de lanzar a ninguno, lo partí en
@@ -11,406 +11,71 @@ description: Usa esta skill para gestionar archivos que varios agentes necesitan
 > ramas no hubo ni un conflicto. El trabajo de verdad no fue escribir prompts: fue conseguir que ningún
 > archivo tuviera dos dueños.
 
-## ¿Cuándo usar esta skill?
-
-Úsala cuando:
-- Dos o más tareas necesitan modificar el mismo archivo
-- Hay archivos de configuración global que varias partes del código usan
-- El plan de reparto identificó archivos compartidos
-- Necesitas reglas claras de quién puede tocar qué
-
-**No la uses** cuando:
-- Cada tarea tiene archivos completamente independientes (ideal, no hay overlap)
-
-## Filosofía
-
-Los **archivos compartidos** son el mayor riesgo en trabajo paralelo. Si dos agentes modifican el mismo archivo al mismo tiempo, uno de dos:
-1. **Git conflicto** al mergear (mejor caso: lo detectas)
-2. **Sobrescritura silenciosa** (peor caso: un agente deshace el trabajo del otro sin darse cuenta)
-
-Esta skill te da reglas para minimizar ese riesgo:
-- **Owner claro**: un solo agente es dueño del archivo
-- **Protocolo de cambios**: otros agentes piden cambios, no los hacen directamente
-- **Integración temprana**: mergear archivos compartidos primero
-
-## Tipos de archivos compartidos comunes
-
-### 1. Configuración de rutas
-
-**Ejemplos:**
-- `routes.js`, `router.ts`, `urls.py`
-- `App.jsx` (React Router), `app-routing.module.ts` (Angular)
-
-**Por qué es compartido:**
-- Cada tarea agrega sus propias rutas
-
-**Solución:**
-- Owner: la tarea que crea el archivo de rutas (usualmente backend o setup inicial)
-- Otros: al terminar, piden al owner agregar su ruta
-
-### 2. Configuración global
-
-**Ejemplos:**
-- `config.js`, `settings.py`, `.env`
-- `package.json`, `requirements.txt`, `Gemfile`
-
-**Por qué es compartido:**
-- Cada tarea puede necesitar agregar dependencias o configuración
-
-**Solución:**
-- Owner: tarea de setup inicial
-- Otros: documentan qué dependencia necesitan, el owner las agrega al final
-
-### 3. Estilos globales
-
-**Ejemplos:**
-- `global.css`, `variables.scss`, `theme.js`
-- `tailwind.config.js`
-
-**Por qué es compartido:**
-- Cada tarea puede agregar variables de color, tamaños, etc.
-
-**Solución:**
-- Owner: tarea de UI base
-- Otros: usan las variables existentes; si necesitan nuevas, las piden
-
-### 4. Types o interfaces compartidas
-
-**Ejemplos:**
-- `types.ts`, `models.ts`, `interfaces.py`
-
-**Por qué es compartido:**
-- Varias partes necesitan los mismos tipos
-
-**Solución:**
-- Owner: tarea que define los modelos de datos
-- Otros: solo lectura; si necesitan cambios, los piden
-
-### 5. Tests de integración
-
-**Ejemplos:**
-- `integration.test.js`, `e2e.spec.ts`
-
-**Por qué es compartido:**
-- Cada tarea puede agregar tests end-to-end
-
-**Solución:**
-- Owner: tarea de testing o integración final
-- Otros: documentan qué tests faltan, el owner los escribe
-
-## Protocolo de gestión
-
-### Opción 1: Owner único (recomendado)
-
-**Regla:**
-- Un archivo compartido tiene **un solo owner** (una tarea/agente)
-- Solo el owner puede modificarlo directamente
-- Los demás piden cambios al owner
-
-**Proceso:**
-
-1. **En el plan de reparto**, identifica archivos compartidos y asigna un owner:
-
-```markdown
-## Archivos Compartidos
-
-- `src/routes.js` → Owner: Tarea 1 (setup)
-- `package.json` → Owner: Tarea 1 (setup)
-- `src/types.ts` → Owner: Tarea 2 (modelos)
-```
-
-2. **Cada tarea no-owner** que necesite un cambio:
-   - En su branch, crea un archivo `REQUESTS.md`:
-
-```markdown
-# Cambios necesarios en archivos compartidos
-
-## src/routes.js
-Agregar ruta:
-```js
-import ProductsPage from './pages/Products';
-// ...
-<Route path="/products" component={ProductsPage} />
-```
-
-## package.json
-Agregar dependencia:
-```json
-"axios": "^1.6.0"
-```
-```
-
-3. **El owner**, antes de mergear su branch:
-   - Lee los `REQUESTS.md` de otras branches
-   - Aplica los cambios en su branch
-   - Commitea y pushea
-
-4. **Al integrar**, la branch del owner se mergea primero (ver `/integrar`).
-
-### Opción 2: Secciones delimitadas
-
-Si el archivo es muy grande, puedes dividirlo en secciones:
-
-**Ejemplo: `routes.js`**
-
-```js
-// ===== ROUTES: AUTH (owner: Task 1) =====
-import Login from './pages/Login';
-import Register from './pages/Register';
-
-const authRoutes = [
-  { path: '/login', component: Login },
-  { path: '/register', component: Register },
-];
-
-// ===== ROUTES: PRODUCTS (owner: Task 2) =====
-import ProductList from './pages/ProductList';
-import ProductForm from './pages/ProductForm';
-
-const productRoutes = [
-  { path: '/products', component: ProductList },
-  { path: '/products/:id', component: ProductForm },
-];
-
-// ===== ROUTES: REPORTS (owner: Task 3) =====
-// (Task 3 agrega sus rutas aquí)
-
-// ===== MAIN EXPORT =====
-export default [...authRoutes, ...productRoutes];
-```
-
-**Regla:**
-- Cada tarea solo toca su sección delimitada
-- Al mergear, si no hubo cambios fuera de las secciones, git mergea limpio
-
-**Riesgo:**
-- Si alguien toca fuera de su sección, hay conflicto igual
-
-### Opción 3: Merge temprano y rebase
-
-**Proceso:**
-
-1. La tarea owner del archivo compartido termina **primero** y mergea a `main`
-2. Las otras tareas hacen **rebase** sobre `main` para tener los cambios
-3. Cada una agrega su parte sobre la base actualizada
-
-**Comandos:**
-
-```bash
-# Tarea owner termina y mergea
-cd ~/proyecto
-git checkout main
-git merge task-1-setup
-git push origin main
-
-# Tarea 2 hace rebase
-cd ~/proyecto-task-2
-git fetch origin
-git rebase origin/main
-# Resuelve conflictos si hay
-git push --force-with-lease origin task-2-products
-```
-
-**Ventaja:**
-- Cada tarea trabaja sobre la versión actualizada
-
-**Desventaja:**
-- Interrumpe el paralelismo (hay que esperar al owner)
-
-## Ejemplo completo
-
-**Contexto:**
-
-Tienes 3 tareas:
-- Tarea 1: Setup (crea `routes.js`, `package.json`)
-- Tarea 2: Productos (necesita agregar ruta `/products`)
-- Tarea 3: Reportes (necesita agregar ruta `/reports`)
-
-**Archivos compartidos identificados:**
-- `src/routes.js` → Owner: Tarea 1
-- `package.json` → Owner: Tarea 1
-
-**Proceso:**
-
-### Paso 1: Tarea 1 crea los archivos
-
-En `proyecto-task-1/`:
-
-```js
-// src/routes.js
-import Home from './pages/Home';
-
-export default [
-  { path: '/', component: Home },
-];
-```
-
-Commitea y pushea:
-
-```bash
-git add .
-git commit -m "feat(setup): crea archivo de rutas base"
-git push origin task-1-setup
-```
-
-### Paso 2: Tarea 2 documenta su necesidad
-
-En `proyecto-task-2/`, crea `REQUESTS.md`:
-
-```markdown
-# Cambios en archivos compartidos
-
-## src/routes.js
-Agregar:
-```js
-import ProductList from './pages/ProductList';
-{ path: '/products', component: ProductList }
-```
-```
-
-Commitea:
-
-```bash
-git add REQUESTS.md
-git commit -m "docs: solicita ruta de productos"
-git push origin task-2-products
-```
-
-### Paso 3: Tarea 3 hace lo mismo
-
-En `proyecto-task-3/`, crea `REQUESTS.md`:
-
-```markdown
-# Cambios en archivos compartidos
-
-## src/routes.js
-Agregar:
-```js
-import Reports from './pages/Reports';
-{ path: '/reports', component: Reports }
-```
-```
-
-Commitea y pushea.
-
-### Paso 4: Tarea 1 revisa las solicitudes
-
-Antes de mergear, Tarea 1 revisa las otras branches:
-
-```bash
-cd ~/proyecto-task-1
-git fetch origin
-
-# Ver REQUESTS.md de Tarea 2
-git show origin/task-2-products:REQUESTS.md
-
-# Ver REQUESTS.md de Tarea 3
-git show origin/task-3-reports:REQUESTS.md
-```
-
-Aplica los cambios en su `routes.js`:
-
-```js
-// src/routes.js
-import Home from './pages/Home';
-import ProductList from './pages/ProductList';
-import Reports from './pages/Reports';
-
-export default [
-  { path: '/', component: Home },
-  { path: '/products', component: ProductList },
-  { path: '/reports', component: Reports },
-];
-```
-
-Commitea:
-
-```bash
-git add src/routes.js
-git commit -m "feat(routes): agrega rutas de productos y reportes"
-git push origin task-1-setup
-```
-
-### Paso 5: Integración
-
-Ahora al mergear:
-
-```bash
-cd ~/proyecto
-git checkout main
-
-# Merge Tarea 1 primero (tiene el archivo completo)
-git merge task-1-setup
-
-# Merge Tarea 2 (ya no toca routes.js, solo sus componentes)
-git merge task-2-products
-
-# Merge Tarea 3 (igual)
-git merge task-3-reports
-
-git push origin main
-```
-
-Sin conflictos, porque solo Tarea 1 tocó `routes.js`.
-
-## Plantilla de REQUESTS.md
-
-Cada tarea no-owner crea este archivo en su branch:
-
-```markdown
-# Solicitudes de cambios en archivos compartidos
-
-## [nombre del archivo]
-
-**Razón:**
-[Por qué necesitas este cambio]
-
-**Cambio solicitado:**
-```[lenguaje]
-[código a agregar o modificar]
-```
-
-**Owner:**
-[Tarea X]
-
----
-
-## [otro archivo si aplica]
-
-...
-```
-
-## Estrategias por tipo de archivo
-
-| Tipo de archivo | Estrategia recomendada |
-|-----------------|------------------------|
-| Rutas/Router | Owner único (setup) + REQUESTS.md |
-| package.json / requirements.txt | Owner único (setup) + REQUESTS.md |
-| Estilos globales | Owner único (UI base) + REQUESTS.md |
-| Types/Interfaces | Owner único (modelos) + solo lectura |
-| Config global | Owner único (setup) + REQUESTS.md |
-| Tests e2e | Owner único (testing) + merge al final |
-
-## Entregables
-
-Al terminar de usar esta skill, debes tener:
-
-1. ✅ **Lista de archivos compartidos** con owner asignado
-2. ✅ **Protocolo claro**: qué hace el owner, qué hacen los demás
-3. ✅ Archivo `REQUESTS.md` en cada branch no-owner (si aplica)
-4. ✅ **Orden de merge** que prioriza owners de archivos compartidos
-
-## Transición a las siguientes skills
-
-Antes de mergear:
-1. Cada agente usa `/antes-del-merge` para verificar que no tocó archivos que no debía
-2. Owners de archivos compartidos revisan `REQUESTS.md` de otras branches y aplican cambios
-3. Usa `/integrar` para mergear en orden (owners primero)
-
-## Notas importantes
-
-- **Menos archivos compartidos = mejor**: si puedes evitarlos con mejor diseño, hazlo
-- **Owner no significa monopolio**: el owner solo coordina, no decide arbitrariamente
-- **Documenta siempre**: un `REQUESTS.md` claro evita malentendidos
-- **Mergear el owner primero** es clave para evitar conflictos
-- **Si hay conflicto igual**: resuélvelo manual, no hay magia (ver `/integrar`)
+## Cuándo usarla
+- El reparto (`docs/reparto.md`) tiene archivos que aparecen en más de una tarea, o en ninguna.
+- Hay archivos globales que todas las partes tocan: rutas, `package.json`, configuración, estilos, tipos.
+- Estás trabajando en tu rama y necesitas cambiar un archivo que no es tuyo.
+
+**No la uses** si cada tarea tiene archivos totalmente separados: no hay nada que coordinar.
+
+## Pasos
+1. Lee `docs/reparto.md` y cruza los «Archivos que posee» de cada tarea. Apunta los que salen en dos
+   o más tareas y los que no son de nadie. Revisa también los sospechosos habituales:
+
+   | Tipo | Ejemplos | Dueño típico |
+   |---|---|---|
+   | Rutas | `routes.js`, `urls.py`, `App.jsx` | Tarea de base o configuración |
+   | Dependencias y configuración | `package.json`, `requirements.txt`, `config.js` | Tarea de base |
+   | Estilos globales | `global.css`, `tailwind.config.js` | Tarea de interfaz base |
+   | Tipos y modelos | `types.ts`, `models.ts` | Tarea de modelos (los demás, solo lectura) |
+   | Textos y traducciones | `translations.js`, `i18n/` | Tarea de contenido |
+   | Tests de punta a punta | `e2e.spec.ts` | Tarea de integración o tests |
+
+2. Elimina todos los compartidos que puedas antes de repartir. Lo mejor es partir el archivo en uno
+   por sección o por tarea, para que cada parte tenga un dueño. Comprueba que el resultado es idéntico
+   al original (mismo build, misma salida, mismos tests) y commitea la partición antes de crear worktrees.
+3. A cada compartido que quede, ponle **un solo dueño**: solo esa tarea lo modifica. Las demás lo leen
+   y, si necesitan algo, lo piden.
+4. Elige el protocolo para cada archivo:
+   - **A. Dueño único con `REQUESTS.md` (recomendado).** Las demás tareas no lo tocan: anotan el cambio
+     exacto en un `REQUESTS.md` en la raíz de su rama y el dueño lo aplica.
+   - **B. Secciones delimitadas.** Si no se puede partir, marca en el archivo una sección por tarea
+     (`// ===== RUTAS: PRODUCTOS (dueña: Tarea 2) =====`) y cada tarea escribe solo dentro de la suya.
+     Si alguien toca fuera de su sección, habrá conflicto igual.
+   - **C. Integración temprana.** El dueño termina primero, su rama se integra con `/integrar` y las demás
+     traen esos cambios con `git merge origin/main`. Es lo más seguro, pero frena el paralelismo.
+5. Anótalo en la sección «Archivos compartidos» de `docs/reparto.md`: archivo, dueño y protocolo. En
+   la sección de integración, pon primero las ramas de los dueños.
+
+   **DETENTE.** Presenta la lista de compartidos, sus dueños y el protocolo. La persona confirma antes
+   de commitear el reparto en `main` y crear los worktrees.
+
+6. Si estás trabajando y necesitas un archivo que no es tuyo, no lo edites. Añade a `REQUESTS.md` en
+   tu rama el archivo, el motivo, el cambio exacto y la tarea dueña, y commitéalo por su ruta:
+   ```bash
+   git add REQUESTS.md
+   git commit -m "docs: pide ruta /products a la tarea de base"
+   git push
+   ```
+   Sigue con tu tarea contando con ese cambio, pero sin hacerlo tú.
+7. Si eres la tarea dueña, antes de cerrar tu rama lee las peticiones de las demás:
+   ```bash
+   git fetch origin
+   git show origin/<rama-de-otra-tarea>:REQUESTS.md
+   ```
+   Aplica las que encajan, commitea el archivo por su ruta y empuja. Si una petición choca con otra o
+   cambia algo de negocio, no decidas tú: **DETENTE** y pregúntale a la persona.
+8. Cuando el dueño confirme que aplicó tu petición, borra `REQUESTS.md` de tu rama (`git rm REQUESTS.md`)
+   para que no llegue a la integración ni choque con el de otras ramas.
+
+## Qué produce
+- Sección «Archivos compartidos» en `docs/reparto.md`: cada archivo con un solo dueño y su protocolo.
+- Orden de integración con las ramas de los dueños primero.
+- `REQUESTS.md` en las ramas que necesitan cambios en archivos ajenos, hasta que el dueño los aplica.
+
+## Siguiente
+- `/worktrees` para crear un worktree por tarea con el reparto ya commiteado.
+- `/antes-del-merge` para comprobar que cada rama solo tocó sus archivos.
+- `/integrar` para juntar las ramas, dueños primero.
+
+Si necesitas un ejemplo completo, lee [references/ejemplo.md](references/ejemplo.md).
