@@ -32,7 +32,7 @@ disable-model-invocation: true
   el agente decide si usarla leyendo solo esto. Máximo unos 300 caracteres. **Nunca** «antes de cualquier cosa».
 - **`disable-model-invocation: true`** solo en las skills que dirigen el trabajo y que debe lanzar la persona:
   `desde-cero`, `analizar-existente`, `extraer-reglas`, `reparto`, `contrato`, `worktrees`, `integrar`,
-  `revision-independiente`. Las demás (`archivos-compartidos`, `antes-del-merge`, `tests-primero`) el agente puede
+  `revision-independiente`, `bitacora`. Las demás (`archivos-compartidos`, `antes-del-merge`, `tests-primero`) el agente puede
   usarlas solo cuando vienen al caso.
 
 ## Cuerpo del `SKILL.md`
