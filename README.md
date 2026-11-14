@@ -54,6 +54,10 @@ activan cuando tú las llamas**. Las otras tres el agente puede usarlas solo cua
 En cada punto donde decides tú (el alcance, quién es dueño de qué, el orden de integración, si algo llega a
 `main`), la skill **se detiene y te pregunta**.
 
+**Si tu equipo no commitea directo en `main`** (trabaja con pull requests o tiene `main` protegida): cuando una
+skill diga «commitea en `main`», usa la rama de la que vas a crear los worktrees y lleva los cambios a `main` con
+un pull request, como siempre.
+
 ## Instalación
 
 Primero, descarga el repositorio una vez:

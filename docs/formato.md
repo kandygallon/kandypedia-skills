@@ -66,6 +66,7 @@ Si necesitas un ejemplo completo, lee [references/ejemplo.md](references/ejemplo
 
 1. **Cada plan va a un archivo fijo de `docs/`**: `docs/especificacion.md`, `docs/diagnostico.md`,
    `docs/reglas.md`, `docs/reparto.md`, `docs/contrato.md`. Y se commitea en `main` antes de crear worktrees.
+   (En equipos que trabajan con pull requests, «`main`» es la rama de la que salen los worktrees.)
 2. **Las decisiones de negocio son de la persona.** El agente presenta y espera: `**DETENTE.**`
 3. **`main` no se toca sin aprobación.** Nada de `git reset --hard`, `git rebase -i`, `git add .` ni `git add -A`.
 4. **Neutral entre herramientas.** Nada que solo exista en una («Task de Cursor», «abre un chat en Cursor»).
