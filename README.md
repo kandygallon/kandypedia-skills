@@ -4,7 +4,7 @@
 varios agentes en paralelo sin que se pisen, revisar antes de juntar y cerrar cada sesión sabiendo qué quedó
 pendiente.
 
-Funcionan en **Cursor**, **Claude Code** y **Codex**, porque siguen el estándar abierto
+Funcionan en **Cursor**, **Claude Code**, **Codex** y **VS Code con GitHub Copilot**, porque siguen el estándar abierto
 [Agent Skills](https://agentskills.io).
 
 ## Por qué existen
@@ -96,10 +96,19 @@ mkdir -p ~/.cursor/skills && cp -R ~/kandypedia-skills/skills/* ~/.cursor/skills
 
 Se usan con `/nombre`, por ejemplo `/reparto`.
 
+### VS Code (GitHub Copilot)
+
+```bash
+mkdir -p ~/.copilot/skills && cp -R ~/kandypedia-skills/skills/* ~/.copilot/skills/
+```
+
+Se usan con `/nombre` en el chat de Copilot. Copilot usa su propia carpeta: **no lee `~/.claude/skills`**, así que
+aunque ya las tengas para Claude Code, para Copilot hay que copiarlas aquí también.
+
 ### Solo en un proyecto
 
 Copia `skills/*` dentro del proyecto en vez de en tu carpeta personal: `.claude/skills/` (Claude Code),
-`.agents/skills/` (Codex y Cursor) o `.cursor/skills/` (Cursor). Si las commiteas, tu equipo las tiene también.
+`.agents/skills/` (Codex y Cursor), `.cursor/skills/` (Cursor) o `.github/skills/` (Copilot en VS Code). Si las commiteas, tu equipo las tiene también.
 
 ### Para actualizarlas
 
