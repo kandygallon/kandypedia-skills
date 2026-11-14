@@ -1,259 +1,139 @@
 # kandypedia-skills
 
-**Skills para trabajar con agentes de IA en paralelo**
+**Skills en español para trabajar con agentes de IA**: planificar antes de programar, repartir el trabajo entre
+varios agentes en paralelo sin que se pisen, revisar antes de juntar y cerrar cada sesión sabiendo qué quedó
+pendiente.
 
-Una colección de skills (archivos SKILL.md) para usar con Cursor y otros agentes de IA, enfocadas en trabajo paralelo, planificación antes de código, y coordinación de múltiples agentes.
+Funcionan en **Cursor**, **Claude Code**, **Codex** y **VS Code con GitHub Copilot**, porque siguen el estándar abierto
+[Agent Skills](https://agentskills.io).
 
-## Filosofía
+## Por qué existen
 
-Nunca empieces un proyecto escribiendo código. Primero:
+Salen de trabajo real: del rediseño de [kandypedia.com](https://kandypedia.com) con cuatro agentes en paralelo y de
+lo que me fue saliendo mal. Varias empiezan contando **de dónde salen**: lo que me pasó y me obligó a escribirla.
 
-1. **Entiende** (si existe código) o **planea** (si es nuevo)
-2. **Divide** el trabajo en tareas independientes
-3. **Ejecuta en paralelo** con múltiples agentes
-4. **Integra** al final
+La idea de fondo: **antes de que un agente escriba una línea, decide qué se construye, quién toca cada archivo y
+cómo se sabe que terminó.**
 
-Estos skills te guían paso a paso en ese proceso.
+## Las skills
 
-## Skills disponibles (11 total)
+| Skill | Para qué | Produce |
+|---|---|---|
+| **Planificar** | | |
+| [`desde-cero`](skills/desde-cero/SKILL.md) | Proyecto nuevo: las preguntas antes de programar | `docs/especificacion.md` |
+| [`analizar-existente`](skills/analizar-existente/SKILL.md) | Entender código que ya existe antes de tocarlo | `docs/diagnostico.md` |
+| [`extraer-reglas`](skills/extraer-reglas/SKILL.md) | Sacar las reglas de negocio de un sistema viejo antes de migrarlo | `docs/reglas.md` |
+| **Trabajar en paralelo** | | |
+| [`reparto`](skills/reparto/SKILL.md) | Dividir el trabajo en tareas que no tocan los mismos archivos | `docs/reparto.md` |
+| [`contrato`](skills/contrato/SKILL.md) | Fijar cómo se comunican las partes antes de separarlas | `docs/contrato.md` |
+| [`worktrees`](skills/worktrees/SKILL.md) | Una copia del repo por agente, lista para trabajar | Un worktree y una rama por tarea |
+| [`archivos-compartidos`](skills/archivos-compartidos/SKILL.md) | Qué hacer cuando dos tareas necesitan el mismo archivo | Un dueño por archivo |
+| [`antes-del-merge`](skills/antes-del-merge/SKILL.md) | La revisión de cada tarea antes de juntarla | Una rama lista para integrar |
+| [`integrar`](skills/integrar/SKILL.md) | Juntar todas las ramas sin tocar `main` hasta que apruebes | La rama `integracion` y un reporte |
+| **Calidad** | | |
+| [`tests-primero`](skills/tests-primero/SKILL.md) | Ejemplos y tests antes que el código | Tests y el código mínimo |
+| [`revision-independiente`](skills/revision-independiente/SKILL.md) | Una revisión con ojos frescos, en un chat nuevo | Hallazgos y una decisión |
+| **Cada día** | | |
+| [`bitacora`](skills/bitacora/SKILL.md) | Cerrar la sesión: qué se hizo, qué queda y qué sigue mañana | `docs/bitacora.md` y `docs/pendientes.md` |
 
-> 📖 **[Ver referencia completa de comandos](docs/comandos.md)** con ejemplos de uso, flujos típicos e instalación en Cursor.
+Las que dirigen el trabajo (todas menos `archivos-compartidos`, `antes-del-merge` y `tests-primero`) **solo se
+activan cuando tú las llamas**. Las otras tres el agente puede usarlas solo cuando vienen al caso.
 
-### 📋 Planificación (antes del código)
+## En qué orden
 
-#### [`/analizar-existente`](skills/planificacion/analizar-existente/SKILL.md)
-Para entender código o flujos existentes antes de modificarlos. Mapea el sistema actual, identifica riesgos y reglas de negocio implícitas.
+**Proyecto nuevo:** `desde-cero` → `reparto` → `contrato` → `worktrees` → en cada worktree, `tests-primero` →
+`revision-independiente` → `antes-del-merge` → `integrar`.
 
-**Úsala cuando:** vas a modificar código que ya existe.
+**Código que ya existe:** igual, pero empieza con `analizar-existente`.
 
-#### [`/desde-cero`](skills/planificacion/desde-cero/SKILL.md)
-Para proyectos nuevos desde cero. Hace las preguntas correctas antes de escribir código y produce una especificación mínima.
+**Migración de un sistema viejo:** `extraer-reglas` → revisa las dudas con quien conoce el negocio →
+`desde-cero` con `docs/reglas.md` → y sigue igual.
 
-**Úsala cuando:** comienzas un proyecto completamente nuevo.
+**Al final de cada día:** `bitacora`.
 
-#### [`/extraer-reglas`](skills/planificacion/extraer-reglas/SKILL.md)
-Para extraer reglas de negocio de servicios legacy durante migraciones. El código legacy es la fuente de verdad para las reglas, no para el diseño.
+En cada punto donde decides tú (el alcance, quién es dueño de qué, el orden de integración, si algo llega a
+`main`), la skill **se detiene y te pregunta**.
 
-**Úsala cuando:** migras un servicio legacy a una nueva arquitectura y necesitas documentar todas sus reglas de negocio.
-
----
-
-### 🔀 Trabajo Paralelo
-
-#### [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md)
-Divide un proyecto en tareas independientes que pueden ejecutarse en paralelo por distintos agentes.
-
-**Úsala cuando:** el trabajo es demasiado grande para un solo agente y puede paralelizarse.
-
-#### [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md)
-Define el contrato exacto (entradas, salidas, errores) de cada punto de unión antes de crear worktrees.
-
-**Úsala cuando:** después de `/reparto` y antes de `/worktrees`, necesitas especificar cómo se comunican las partes.
-
-#### [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md)
-Configura worktrees de git (uno por tarea) para que varios agentes trabajen sin pisarse.
-
-**Úsala cuando:** vas a lanzar varios agentes trabajando al mismo tiempo.
-
-#### [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md)
-Gestiona archivos que varios agentes necesitan modificar, evitando conflictos y sobrescrituras.
-
-**Úsala cuando:** dos o más tareas necesitan tocar el mismo archivo.
-
-#### [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md)
-Checklist de calidad antes de mergear tu branch: verifica que tu tarea está completa, no rompiste nada, y respetaste las fronteras asignadas.
-
-**Úsala cuando:** terminaste tu tarea y estás listo para mergear.
-
-#### [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md)
-Mergea todas las branches paralelas en el orden correcto, resuelve conflictos y verifica que el resultado funciona end-to-end.
-
-**Úsala cuando:** todas las tareas paralelas terminaron y necesitas integrarlas.
-
----
-
-### ✅ Calidad
-
-#### [`/tests-primero`](skills/calidad/tests-primero/SKILL.md)
-Define ejemplos de entrada/salida, escribe tests que fallan, y luego implementa lo mínimo para que pasen.
-
-**Úsala cuando:** vas a implementar código en tu worktree y quieres asegurar que funciona correctamente.
-
-#### [`/revision-independiente`](skills/calidad/revision-independiente/SKILL.md)
-Revisa el código con ojos frescos en un chat nuevo con modelo diferente, como si fueras el único revisor.
-
-**Úsala cuando:** terminaste tu implementación y quieres una revisión objetiva antes de mergear.
-
----
-
-## Orden recomendado
-
-### Para código existente:
-1. [`/analizar-existente`](skills/planificacion/analizar-existente/SKILL.md) → diagnóstico del código actual
-2. [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md) → dividir en tareas
-3. [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md) → definir contratos entre partes
-4. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → crear espacios de trabajo
-5. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
-6. En cada worktree: [`/tests-primero`](skills/calidad/tests-primero/SKILL.md) → implementar con tests
-7. [`/revision-independiente`](skills/calidad/revision-independiente/SKILL.md) → revisar cada tarea
-8. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar cada tarea
-9. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
-
-### Para proyectos nuevos:
-1. [`/desde-cero`](skills/planificacion/desde-cero/SKILL.md) → especificación mínima
-2. [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md) → dividir en tareas
-3. [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md) → definir contratos entre partes
-4. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → crear espacios de trabajo
-5. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
-6. En cada worktree: [`/tests-primero`](skills/calidad/tests-primero/SKILL.md) → implementar con tests
-7. [`/revision-independiente`](skills/calidad/revision-independiente/SKILL.md) → revisar cada tarea
-8. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar cada tarea
-9. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
-
-### Para migraciones de legacy:
-1. [`/extraer-reglas`](skills/planificacion/extraer-reglas/SKILL.md) → documentar reglas del legacy en `reglas.md`
-2. Revisar reglas con experto de dominio → resolver dudas
-3. [`/desde-cero`](skills/planificacion/desde-cero/SKILL.md) con `@reglas.md` → especificar nuevo servicio
-4. [`/reparto`](skills/trabajo-paralelo/reparto/SKILL.md) → dividir implementación
-5. [`/contrato`](skills/trabajo-paralelo/contrato/SKILL.md) → definir contratos
-6. [`/worktrees`](skills/trabajo-paralelo/worktrees/SKILL.md) → espacios de trabajo
-7. [`/archivos-compartidos`](skills/trabajo-paralelo/archivos-compartidos/SKILL.md) → gestionar overlaps
-8. En cada worktree: [`/tests-primero`](skills/calidad/tests-primero/SKILL.md) con tests por cada regla
-9. [`/revision-independiente`](skills/calidad/revision-independiente/SKILL.md) → revisar cada tarea
-10. [`/antes-del-merge`](skills/trabajo-paralelo/antes-del-merge/SKILL.md) → verificar
-11. [`/integrar`](skills/trabajo-paralelo/integrar/SKILL.md) → mergear todo
-
----
+**Si tu equipo no commitea directo en `main`** (trabaja con pull requests o tiene `main` protegida): cuando una
+skill diga «commitea en `main`», usa la rama de la que vas a crear los worktrees y lleva los cambios a `main` con
+un pull request, como siempre.
 
 ## Instalación
 
-### Opción 1: Clonar el repositorio (recomendado)
+Primero, descarga el repositorio una vez:
 
 ```bash
-git clone https://github.com/kandygallon/kandypedia-skills.git ~/.cursor/kandypedia-skills
+git clone https://github.com/kandygallon/kandypedia-skills.git ~/kandypedia-skills
 ```
 
-Luego, en Cursor:
-1. Ve a **Settings** → **Cursor Settings** → **Features**
-2. En **Skill directories**, agrega: `~/.cursor/kandypedia-skills/skills`
+Después, cópialas a la carpeta de tu herramienta:
 
-### Opción 2: Descargar skills individuales
+### Claude Code
 
-Descarga los archivos `.md` que necesites y colócalos en tu directorio de skills de Cursor.
-
-### Opción 3: Referenciar por URL
-
-En Cursor, puedes referenciar skills directamente:
-
-```
-@https://raw.githubusercontent.com/kandygallon/kandypedia-skills/main/skills/planificacion/analizar-existente/SKILL.md
+```bash
+mkdir -p ~/.claude/skills && cp -R ~/kandypedia-skills/skills/* ~/.claude/skills/
 ```
 
----
+Se usan con `/nombre`, por ejemplo `/reparto`.
 
-## Uso
+### Codex
 
-### En Cursor
-
-Una vez instalado, puedes invocar las skills en tu chat con el agente:
-
-```
-/analizar-existente
+```bash
+mkdir -p ~/.agents/skills && cp -R ~/kandypedia-skills/skills/* ~/.agents/skills/
 ```
 
-O simplemente mencionando el contexto:
+Se usan con `$nombre`, por ejemplo `$reparto`, o eligiéndolas con `/skills`.
 
-```
-Analiza este código antes de modificarlo (usa /analizar-existente)
-```
+### Cursor
 
-El agente leerá automáticamente la skill y seguirá sus instrucciones.
+Cursor lee las skills de `~/.cursor/skills/`, y **también** de `~/.agents/skills/` y `~/.claude/skills/`.
+**Si ya las instalaste para Claude Code o Codex, Cursor ya las ve:** no las instales otra vez, o te saldrán
+repetidas. Si solo usas Cursor:
 
-### Con otros agentes
-
-Estos skills son archivos markdown con instrucciones claras. Puedes:
-- Copiar el contenido y pegarlo como prompt
-- Compartir el link al archivo en GitHub
-- Incluirlos en tu sistema de prompts personalizado
-
----
-
-## Estructura del repositorio
-
-```
-kandypedia-skills/
-├── README.md                    # Este archivo
-├── LICENSE                      # MIT License
-├── docs/
-│   └── comandos.md              # Referencia completa de comandos
-└── skills/
-    ├── planificacion/
-    │   ├── analizar-existente/
-    │   │   └── SKILL.md
-    │   ├── desde-cero/
-    │   │   └── SKILL.md
-    │   └── extraer-reglas/
-    │       └── SKILL.md
-    ├── trabajo-paralelo/
-    │   ├── reparto/
-    │   │   └── SKILL.md
-    │   ├── contrato/
-    │   │   └── SKILL.md
-    │   ├── worktrees/
-    │   │   └── SKILL.md
-    │   ├── archivos-compartidos/
-    │   │   └── SKILL.md
-    │   ├── antes-del-merge/
-    │   │   └── SKILL.md
-    │   └── integrar/
-    │       └── SKILL.md
-    └── calidad/
-        ├── tests-primero/
-        │   └── SKILL.md
-        └── revision-independiente/
-            └── SKILL.md
+```bash
+mkdir -p ~/.cursor/skills && cp -R ~/kandypedia-skills/skills/* ~/.cursor/skills/
 ```
 
-Cada skill tiene:
-- **Frontmatter YAML** con `name` y `description`
-- **Sección "¿Cuándo usar?"** con triggers claros
-- **Proceso paso a paso** con ejemplos
-- **Entregables** esperados al terminar
+Se usan con `/nombre`, por ejemplo `/reparto`.
 
----
+### VS Code (GitHub Copilot)
 
-## Contribuir
+```bash
+mkdir -p ~/.copilot/skills && cp -R ~/kandypedia-skills/skills/* ~/.copilot/skills/
+```
 
-¿Tienes ideas para mejorar estas skills o agregar nuevas?
+Se usan con `/nombre` en el chat de Copilot. Copilot usa su propia carpeta: **no lee `~/.claude/skills`**, así que
+aunque ya las tengas para Claude Code, para Copilot hay que copiarlas aquí también.
 
-1. Haz un fork del repositorio
-2. Crea una branch con tu cambio
-3. Abre un Pull Request
+### Solo en un proyecto
 
-También puedes abrir un [issue](https://github.com/kandygallon/kandypedia-skills/issues) con sugerencias.
+Copia `skills/*` dentro del proyecto en vez de en tu carpeta personal: `.claude/skills/` (Claude Code),
+`.agents/skills/` (Codex y Cursor), `.cursor/skills/` (Cursor) o `.github/skills/` (Copilot en VS Code). Si las commiteas, tu equipo las tiene también.
 
----
+### Para actualizarlas
+
+```bash
+cd ~/kandypedia-skills && git pull
+```
+
+Y vuelve a copiarlas con el mismo comando de tu herramienta.
+
+## Cómo está hecha cada skill
+
+Cada una es una carpeta con un `SKILL.md` corto (máximo 120 líneas), que es lo único que el agente lee al
+usarla. Los ejemplos largos están aparte, en `references/ejemplo.md`, y el agente solo los abre si los
+necesita. El formato completo está en [docs/formato.md](docs/formato.md).
 
 ## Inspiración
 
-Este repositorio está inspirado en el trabajo de [Matt Pocock](https://github.com/mattpocock/skills) y su enfoque de skills como conocimiento reutilizable para agentes de IA.
-
----
+Inspirado en [Matt Pocock](https://github.com/mattpocock/skills) y su forma de entender las skills: pequeñas,
+fáciles de adaptar y que se pueden combinar.
 
 ## Licencia
 
-[MIT License](LICENSE) - libre para usar, modificar y distribuir.
-
----
+[MIT](LICENSE): úsalas, cámbialas y compártelas.
 
 ## Hecho por Kandy Gallón
 
-👩‍💻 [kandypedia.com](https://kandypedia.com)
-
-¿Quieres aprender más sobre trabajo en paralelo con agentes de IA, Cursor, git worktrees y cloud agents?
-
-🎓 **[Coaching 1:1](https://kandypedia.com/coaching)** - Sesiones personalizadas para dominar estas técnicas.
-
----
-
-**¿Te resultó útil?** Dale una ⭐ al repositorio y compártelo con otros desarrolladores que trabajan con agentes de IA.
+👩‍💻 [kandypedia.com](https://kandypedia.com) · Programo desde 2006 y cuento lo que construyo con agentes,
+errores incluidos.
