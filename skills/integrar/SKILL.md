@@ -1,481 +1,101 @@
 ---
 name: integrar
-description: Usa esta skill para mergear todas las branches paralelas en el orden correcto, resolver conflictos y verificar que el resultado funciona end-to-end.
+description: Junta las ramas de las tareas paralelas en una rama `integracion`, una a una y en el orden que confirma la persona, resuelve conflictos y comprueba que todo funciona junto. Úsala cuando todas las ramas pasaron /antes-del-merge. main solo se toca con aprobación.
+disable-model-invocation: true
 ---
 
 # Integrar
 
-## ¿Cuándo usar esta skill?
-
-Úsala cuando:
-- Todas las tareas paralelas terminaron (cada una pasó `/antes-del-merge`)
-- Tienes múltiples branches listas para mergear
-- Necesitas juntar todo y llevarlo a la branch principal
-- Quieres verificar que el sistema completo funciona
-
-**No la uses** cuando:
-- Todavía hay tareas en progreso (espera a que terminen)
-- Solo hay una branch para mergear (hazlo directamente)
-
-## Filosofía
-
-La integración es el momento de verdad: el código que funcionaba por separado debe funcionar junto. Incluso con buena planificación, pueden surgir:
-- **Conflictos de git**: dos branches modificaron las mismas líneas
-- **Conflictos lógicos**: dos branches funcionan solas, pero juntas no (ej: ambas usan el puerto 3000)
-- **Dependencias faltantes**: una tarea agregó una librería que otra necesita
-
-Esta skill te guía para integrar todo en el **orden correcto**, **resolver conflictos** y **verificar** que el resultado final funciona.
-
-**Regla de oro: `main` no se toca hasta que el usuario lo apruebe.** Todo se integra primero en una branch `integracion`. Si algo sale mal, `main` sigue intacto y basta con borrar esa branch.
-
-## Proceso paso a paso
-
-### 1. Preparación
-
-**Antes de empezar:**
-
-1. Todas las tareas pasaron el checklist de `/antes-del-merge`
-2. Todas las branches están pusheadas al remoto
-3. Tienes el plan de reparto a mano (para saber el orden)
-
-**Ubícate en el repo principal y crea la branch de integración:**
-
-```bash
-cd ~/proyecto  # El worktree principal, no los auxiliares
-git checkout main
-git pull origin main          # Asegúrate de tener la última versión
-git checkout -b integracion   # Aquí se junta todo. main no se toca
-```
-
-### 2. Determina el orden de merge
-
-**Regla general:**
-
-1. **Primero**: tareas que son dependencias de otras (ej: setup, modelos)
-2. **Segundo**: tareas que tienen archivos compartidos con owner asignado
-3. **Tercero**: tareas independientes (pueden ir en cualquier orden)
-4. **Último**: tareas de integración o tests end-to-end
-
-**Ejemplo:**
-
-Si tienes:
-- Tarea 1: Setup (crea config, rutas base) → **Primero** (otros dependen)
-- Tarea 2: API de productos (modelos + controladores) → **Segundo** (UI depende)
-- Tarea 3: UI de productos (consume API) → **Tercero** (depende de Tarea 2)
-- Tarea 4: Reportes (independiente) → **Tercero** (paralelo con Tarea 3)
-
-Orden de merge:
-```
-1. task-1-setup
-2. task-2-products
-3. task-3-ui
-4. task-4-reports
-```
-
-**Consulta el plan de reparto:**
-
-```markdown
-## Integración Final
-1. Tarea 1 y Tarea 2 (sin conflictos esperados)
-2. Tarea 3 (puede tener conflictos con Tarea 1, resolver manual)
-```
-
-**DETENTE.** Presenta al usuario el orden de merge que propones y por qué. Espera su confirmación antes de mergear nada.
-
-### 3. Mergea la primera branch (en `integracion`)
-
-```bash
-git merge task-1-setup
-```
-
-**Si el merge es limpio (no hay conflictos):**
-
-```bash
-# Git dice: "Fast-forward" o "Merge made by..."
-# Verifica que funciona
-npm install  # Por si agregó dependencias
-npm test     # Por si agregó tests
-
-# Si todo está bien, continúa con la siguiente
-```
-
-**Si hay conflictos (ver sección de resolución abajo):**
-
-```bash
-# Git dice: "CONFLICT (content): Merge conflict in <archivo>"
-# Resuelve el conflicto manual (ver paso 5)
-```
-
-### 4. Mergea las siguientes branches una por una
-
-Repite para cada branch en orden:
-
-```bash
-git merge task-2-products
-# Verifica
-npm test
-
-git merge task-3-ui
-# Verifica
-npm test
-
-git merge task-4-reports
-# Verifica
-npm test
-```
-
-**Importante:**
-- **No merges todas juntas**: hazlo una por una para detectar qué merge causa problemas
-- **Verifica después de cada merge**: si algo se rompe, sabes qué branch lo causó
-- **Commitea después de resolver conflictos**: `git commit` (sin `-m`, git genera el mensaje)
-
-### 5. Resolución de conflictos
-
-**Cuando hay conflicto:**
-
-Git marca el archivo con:
-
-```js
-<<<<<<< HEAD
-// Código que ya estaba en main
-const port = 3000;
-=======
-// Código que viene de la branch que estás mergeando
-const port = 5000;
->>>>>>> task-2-products
-```
-
-**Cómo resolver:**
-
-1. **Entiende qué hace cada versión:**
-   - `HEAD`: el código actual en `integracion` (con los merges previos)
-   - `task-2-products`: el código de la branch que estás mergeando
-
-2. **Decide qué quieres:**
-   - ¿Solo una versión? Elimina la otra y los marcadores
-   - ¿Ambas? Combínalas de forma lógica
-   - ¿Ninguna? Escribe algo nuevo
-
-3. **Edita el archivo:**
-
-```js
-// Resolución: usa el puerto de la config, no hardcodeado
-const port = process.env.PORT || 3000;
-```
-
-4. **Marca como resuelto:**
-
-```bash
-git add <archivo-resuelto>
-```
-
-5. **Termina el merge:**
-
-```bash
-git commit  # Sin -m, git genera mensaje de merge
-```
-
-6. **Verifica que funciona:**
-
-```bash
-npm test
-npm start  # O lo que sea relevante
-```
-
-**Si no sabes cómo resolver:**
-- Consulta a los agentes/personas que trabajaron en ambas branches
-- Lee el historial: `git log --oneline --graph task-1-setup task-2-products`
-- Prueba ambas versiones por separado en worktrees temporales
-
-### 6. Merge de archivos compartidos (protocolo especial)
-
-Si usaste `/archivos-compartidos` con el protocolo de `REQUESTS.md`:
-
-**Antes de mergear la branch owner del archivo compartido:**
-
-1. Revisa las solicitudes de cambio:
-
-```bash
-# Ver REQUESTS.md de cada branch
-git show origin/task-2-products:REQUESTS.md
-git show origin/task-3-ui:REQUESTS.md
-```
-
-2. Aplica los cambios en la branch owner:
-
-```bash
-git checkout task-1-setup
-# Edita el archivo compartido con los cambios solicitados
-git add <archivo-compartido>
-git commit -m "feat: aplica cambios solicitados de otras tareas"
-git push origin task-1-setup
-```
-
-3. Ahora mergea la branch owner (ya tiene todo):
-
-```bash
-git checkout integracion
-git merge task-1-setup
-```
-
-4. Las otras branches no deberían tocar ese archivo, así que sus merges serán limpios.
-
-### 7. Verifica la integración completa
-
-Después de mergear todo:
-
-**Tests:**
-
-```bash
-npm test            # O el comando de tests del proyecto
-npm run test:e2e    # Si hay tests end-to-end
-```
-
-**Linter:**
-
-```bash
-npm run lint
-```
-
-**Ejecuta el proyecto:**
-
-```bash
-npm start
-# O el comando para levantar el proyecto
-```
-
-**Verifica manualmente:**
-- Navega por la aplicación
-- Prueba las funcionalidades de cada tarea
-- Verifica que las integraciones entre tareas funcionan
-
-**Ejemplo:**
-- Loguea un usuario (Tarea 1)
-- Crea un producto (Tarea 2)
-- Ve la lista de productos en la UI (Tarea 3)
-- Genera un reporte (Tarea 4)
-
-Si algo no funciona, identifica qué merge lo rompió y revierte **en `integracion`**:
-
-```bash
-git log --oneline -10    # Ve los últimos merges
-git revert -m 1 <commit-sha>  # Revierte el merge problemático
-```
-
-Si es más fácil empezar de cero, **pregunta antes al usuario** y luego borra solo la branch de integración. `main` sigue intacto:
-
-```bash
-git checkout main
-git branch -D integracion
-```
-
-**Nunca uses `git reset --hard` sobre `main`.**
-
-### 8. DETENTE y pide aprobación para llevarlo a `main`
-
-Cuando todo funciona en `integracion`, **no mergees a `main` todavía**:
-
-1. Escribe el reporte del paso 10.
-2. Preséntaselo al usuario: qué se integró, qué conflictos hubo y cómo lo verificaste.
-3. **Espera su aprobación.** Si el proyecto usa pull requests, en vez de mergear crea un PR de `integracion` hacia `main` y deja que lo apruebe el usuario.
-
-Solo con la aprobación explícita del usuario:
-
-```bash
-git checkout main
-git merge --no-ff integracion
-git push origin main
-```
-
-**Antes de pushear, considera:**
-- ¿Hay CI/CD? Espera a que pase
-- ¿Es producción? Verifica en staging primero
-
-### 9. Limpia worktrees y branches
-
-Después de un push exitoso, **y preguntando antes al usuario**, porque borrar branches remotas no tiene vuelta atrás:
-
-```bash
-# Elimina worktrees
-git worktree remove ../proyecto-task-1
-git worktree remove ../proyecto-task-2
-git worktree remove ../proyecto-task-3
-
-# Elimina branches locales
-git branch -d task-1-setup task-2-products task-3-ui
-
-# Elimina branches remotas (opcional, si ya no las necesitas)
-git push origin --delete task-1-setup
-git push origin --delete task-2-products
-git push origin --delete task-3-ui
-```
-
-### 10. Produce reporte de integración
-
-Documenta qué se integró:
-
-```markdown
-# Reporte de Integración
-
-## Fecha
-[fecha]
-
-## Branches integradas
-- `task-1-setup`: Setup inicial (rutas, config)
-- `task-2-products`: API de productos
-- `task-3-ui`: UI de productos
-- `task-4-reports`: Reportes de stock
-
-## Orden de merge
-1. task-1-setup (sin conflictos)
-2. task-2-products (sin conflictos)
-3. task-3-ui (conflicto en `routes.js`, resuelto manual)
-4. task-4-reports (sin conflictos)
-
-## Conflictos resueltos
-- `src/routes.js`: Ambas tareas agregaron rutas en el mismo lugar.
-  Resolución: combinadas en orden alfabético.
-
-## Verificación
-- ✅ Tests pasan (23 tests, 0 fallos)
-- ✅ Linter pasa sin errores
-- ✅ Aplicación funciona end-to-end
-- ✅ Todas las funcionalidades verificadas manualmente
-
-## Commits finales
-- `abc1234`: Merge task-1-setup
-- `def5678`: Merge task-2-products
-- `ghi9012`: Merge task-3-ui (conflictos resueltos)
-- `jkl3456`: Merge task-4-reports
-
-## Próximos pasos
-- Deploy a staging
-- QA manual completo
-- Deploy a producción
-```
-
-## Estrategias de merge
-
-### Estrategia 1: Merge commits (recomendado)
-
-```bash
-git merge task-1-setup
-```
-
-**Pros:**
-- Mantiene historial completo
-- Fácil ver qué branch aportó qué
-
-**Contras:**
-- Historial más complejo visualmente
-
-### Estrategia 2: Squash merge
-
-```bash
-git merge --squash task-1-setup
-git commit -m "feat: integra setup (task-1)"
-```
-
-**Pros:**
-- Historial más limpio (un commit por tarea)
-
-**Contras:**
-- Pierdes detalle de commits individuales
-
-### Estrategia 3: Rebase (avanzado)
-
-```bash
-git rebase task-1-setup
-```
-
-**Pros:**
-- Historial lineal (sin merges)
-
-**Contras:**
-- Más propenso a conflictos
-- Reescribe historia (no usar en branches compartidas)
-
-**Recomendación:** usa merge commits simple para integración de tareas paralelas.
-
-## Problemas comunes
-
-### "CONFLICT: both modified <archivo>"
-
-**Causa:** Ambas branches modificaron las mismas líneas del mismo archivo.
-
-**Solución:** Resuelve manual (ver paso 5).
-
-### "CONFLICT: both added <archivo>"
-
-**Causa:** Ambas branches crearon un archivo con el mismo nombre pero diferente contenido.
-
-**Solución:**
-- Si los archivos deben ser uno solo: combina el contenido
-- Si son archivos diferentes: renombra uno
-
-### Tests pasan individualmente pero fallan juntos
-
-**Causa:** Conflicto lógico (ej: ambas tareas usan el mismo puerto, nombre de variable global, etc.)
-
-**Solución:**
-- Identifica el conflicto (busca en los archivos de ambas tareas)
-- Cambia uno para que no colisione (ej: usa puerto dinámico, namespaces)
-
-### Un merge rompió algo pero no hubo conflictos de git
-
-**Causa:** Las branches tocaron partes relacionadas pero no las mismas líneas.
-
-**Solución:**
-- Revierte el merge: `git revert -m 1 <merge-commit-sha>`
-- Investiga qué salió mal
-- Arregla en la branch original y vuelve a intentar el merge
-
-### No sé en qué orden mergear
-
-**Solución:**
-- Consulta el plan de reparto (sección "Integración Final")
-- Regla general: dependencias primero, dependientes después
-- Si hay dudas, mergea una y ve si las demás causan conflictos
-
-## Checklist de integración
-
-```markdown
-- [ ] Todas las tareas pasaron /antes-del-merge
-- [ ] Creé la branch `integracion` desde main actualizado
-- [ ] Determiné el orden de merge y el usuario lo confirmó
-- [ ] Mergeé cada branch una por una
-- [ ] Resolví conflictos (si hubo)
-- [ ] Verifiqué después de cada merge (tests, linter)
-- [ ] Ejecuté el proyecto completo end-to-end
-- [ ] Todas las funcionalidades trabajan juntas
-- [ ] El usuario aprobó llevarlo a main (o el PR)
-- [ ] Hice push a main
-- [ ] Limpié worktrees y branches
-- [ ] Documenté la integración
-```
-
-## Entregables
-
-Al terminar de usar esta skill, debes tener:
-
-1. ✅ Todas las branches **integradas en `integracion`** y, con aprobación del usuario, **en main**
-2. ✅ **Conflictos resueltos** (si hubo)
-3. ✅ **Tests pasando** en la integración completa
-4. ✅ **Proyecto funcional** end-to-end
-5. ✅ **Reporte de integración** documentado
-6. ✅ **Worktrees y branches limpios**
-
-## Transición después de integrar
-
-Después de la integración exitosa:
-- Deploy a staging/producción
-- Code review del resultado (si aplica)
-- Retrospectiva: ¿qué funcionó bien? ¿qué mejorar la próxima vez?
-
-## Notas importantes
-
-- **No integres si algo no funciona**: mejor resolver en la branch individual
-- **Mergea una branch a la vez**: no hagas `git merge branch-1 branch-2 branch-3` de golpe
-- **Verifica después de cada merge**: detecta problemas temprano
-- **Documenta las resoluciones**: el próximo que integre te lo agradecerá
-- **Si algo sale muy mal, puedes empezar de nuevo**: pregunta al usuario y borra la branch `integracion`. `main` sigue intacto
+## Cuándo usarla
+- Todas las tareas paralelas terminaron y cada rama pasó `/antes-del-merge`.
+- Tienes varias ramas listas y hay que juntarlas y comprobar que funcionan juntas.
+- Hay que integrar primero la rama dueña de un archivo compartido (integración temprana).
+
+**No la uses** si aún hay tareas a medias, o si solo hay una rama: en ese caso basta un merge normal
+con aprobación.
+
+## Pasos
+1. Comprueba lo previo: cada rama pasó `/antes-del-merge` y está subida al remoto. Lee en
+   `docs/reparto.md` las secciones de archivos compartidos e integración final.
+2. Crea la rama `integracion` desde `main` actualizado, en el repositorio principal (no en un worktree
+   de tarea). Todo se junta aquí; `main` no se toca.
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout -b integracion
+   ```
+3. Propón el orden de merge:
+   1. Ramas de las que dependen otras (base, modelos).
+   2. Ramas dueñas de archivos compartidos, con los `REQUESTS.md` ya aplicados.
+   3. Ramas independientes.
+   4. Al final, tests de punta a punta o tareas de integración.
+
+   **DETENTE.** Presenta el orden y el porqué. No mergees nada hasta que la persona lo confirme.
+4. Antes de mergear una rama dueña, comprueba que aplicó las peticiones de las demás:
+   ```bash
+   git fetch origin
+   git show origin/<otra-rama>:REQUESTS.md
+   ```
+   Si falta alguna, se arregla en la rama dueña, no aquí.
+5. Mergea **una rama cada vez** y verifica antes de pasar a la siguiente:
+   ```bash
+   git merge --no-ff origin/<rama>
+   ```
+   Después de cada merge: instala dependencias si cambiaron, pasa tests y build, levanta la app y abre
+   lo que aportó esa rama. Si algo falla, sabes qué rama lo causó. Nunca mergees varias de golpe.
+6. Si hay conflicto, mira qué hace cada versión (`HEAD` es lo ya integrado; la otra, la rama que
+   entra). Quédate con una, combínalas o escribe algo nuevo; quita los marcadores y cierra el merge:
+   ```bash
+   git add <archivo-resuelto>
+   git commit
+   ```
+   Si resolverlo implica elegir un comportamiento o una regla de negocio, **DETENTE** y pregunta.
+   Ojo también a los conflictos lógicos sin marcas: dos ramas que usan el mismo puerto, la misma
+   variable global o el mismo nombre de archivo.
+7. Si un merge rompe algo, deshazlo **en `integracion`**:
+   ```bash
+   git log --oneline --merges -10
+   git revert -m 1 <sha-del-merge>
+   ```
+   Arregla el fallo en la rama original y vuelve a mergearla. Antes, revierte el revert
+   (`git revert <sha-del-revert>`); si no, git solo traerá los commits nuevos.
+   Si es más fácil empezar de cero, **pregunta antes** y borra solo la rama de integración; `main`
+   sigue intacto:
+   ```bash
+   git checkout main
+   git branch -D integracion
+   ```
+   Nunca uses `git reset --hard` sobre `main`.
+8. Con todo mergeado, verifica el conjunto: tests (también los de punta a punta), linter y build.
+   Después levanta la app y úsala: recorre lo que aportó cada tarea y, sobre todo, lo que cruza tareas
+   (por ejemplo, entrar con un usuario, crear un producto y verlo en el reporte). En web, mira la consola.
+9. Escribe el reporte de integración: ramas integradas y en qué orden, conflictos y cómo se
+   resolvieron, reverts, qué verificaste y qué quedó pendiente.
+
+   **DETENTE.** Presenta el reporte. Solo con la aprobación explícita de la persona lleva el resultado a
+   `main`, o abre un pull request de `integracion` hacia `main` si el proyecto los usa:
+   ```bash
+   git checkout main
+   git merge --no-ff integracion
+   git push origin main
+   ```
+   Si hay CI, espera a que pase. Si la persona prefiere un commit por tarea, puede hacer squash al
+   mergear; no lo decidas tú.
+10. Limpieza, solo después de un push correcto y **preguntando antes**:
+    ```bash
+    git worktree remove ../proyecto-tarea-1
+    git branch -d tarea-1-base
+    ```
+    Borrar ramas remotas (`git push origin --delete <rama>`) no tiene vuelta atrás: pregunta antes de
+    cada una.
+
+## Qué produce
+- La rama `integracion` con todas las ramas mergeadas una a una y verificadas.
+- Un reporte de integración: orden, conflictos, reverts y verificación.
+- Con aprobación, `main` actualizado (o un pull request abierto) y worktrees y ramas limpios.
+
+## Siguiente
+- `/revision-independiente` si la persona quiere otra mirada sobre el resultado antes de llevarlo a `main`.
+- `/reparto` para la siguiente ronda, con lo que hayas aprendido sobre conflictos y archivos compartidos.
+
+Si necesitas un ejemplo completo, lee [references/ejemplo.md](references/ejemplo.md).
