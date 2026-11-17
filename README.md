@@ -34,7 +34,7 @@ cómo se sabe que terminó.**
 | [`tests-primero`](skills/tests-primero/SKILL.md) | Ejemplos y tests antes que el código | Tests y el código mínimo |
 | [`revision-independiente`](skills/revision-independiente/SKILL.md) | Una revisión con ojos frescos, en un chat nuevo | Hallazgos y una decisión |
 | **Cada día** | | |
-| [`bitacora`](skills/bitacora/SKILL.md) | Cerrar la sesión: qué se hizo, qué queda y qué sigue mañana | `docs/bitacora.md` y `docs/pendientes.md` |
+| [`bitacora`](skills/bitacora/SKILL.md) | Cerrar la sesión: qué se hizo, qué queda y qué sigue mañana | Una entrada en tu bitácora (o `docs/bitacora.md` si no tienes) y los pendientes |
 
 Las que dirigen el trabajo (todas menos `archivos-compartidos`, `antes-del-merge` y `tests-primero`) **solo se
 activan cuando tú las llamas**. Las otras tres el agente puede usarlas solo cuando vienen al caso.
