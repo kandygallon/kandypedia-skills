@@ -8,10 +8,10 @@ disable-model-invocation: true
 
 > **De dónde sale.** Desde el 1 de septiembre de 2026 cierro cada sesión igual: qué hice, qué quedó pendiente y
 > qué sigue mañana, en una línea por día. Setenta días después, esa bitácora es lo que me dice dónde estoy,
-> qué se me olvidaba y cuántos días seguidos llevo. Lo hacía a mano cada noche. Ahora es un comando.
+> qué se me olvidaba y qué sigue. Lo hacía a mano cada noche. Ahora es un comando.
 >
 > La primera vez que la usé en mi propio repositorio quiso crear `docs/bitacora.md`, al lado de la bitácora
-> que llevo desde septiembre con otro nombre, y con la racha empezando en 1. Por eso ahora busca primero.
+> que llevo desde septiembre con otro nombre. Por eso ahora busca primero.
 
 ## Cuándo usarla
 - Al terminar una sesión de trabajo, aunque haya sido corta.
@@ -27,8 +27,8 @@ disable-model-invocation: true
    find . -maxdepth 3 -iname '*.md' -not -path '*/node_modules/*' -not -path './.git/*' \
      -not -path '*/skills/*' | grep -i -E 'bit[aá]cora|diario|journal|devlog|pendientes|todo|plan'
    ```
-   - **Si hay una, esa es la bitácora:** úsala y **sigue su formato** (una tabla, una línea por día, otra
-     cuenta de días…), no el de esta skill. Lo mismo con la lista de pendientes.
+   - **Si hay una, esa es la bitácora:** úsala y **sigue su formato** (una tabla, una línea por día…), no el
+     de esta skill. Lo mismo con la lista de pendientes.
    - **Si hay varias candidatas o no está claro**, **DETENTE** y pregunta cuál es.
    - **Si no hay ninguna**, se crean `docs/bitacora.md` y `docs/pendientes.md`. Un `CHANGELOG` no cuenta:
      es para quien usa el proyecto, no para quien lo construye.
@@ -73,7 +73,8 @@ disable-model-invocation: true
 
    **Mañana:** una sola cosa, la primera.
    ```
-   Si el archivo lleva una cuenta de días seguidos, actualízala: un día cuenta si se hizo algo, aunque sea poco.
+   **Sin rachas ni cuentas de días:** la bitácora cuenta qué pasó en el proyecto, no lleva la cuenta de la
+   persona. Si el archivo ya tiene una línea así, déjala como está.
 8. **Actualiza los pendientes:** si son nuevos, una lista de casillas (`- [ ]`), con lo más urgente arriba. Quita lo
    hecho. No borres pendientes viejos sin preguntar: si uno lleva semanas ahí, pregunta si sigue en pie.
 9. **Si la bitácora va en git**, commitea solo esos dos archivos, por su nombre (los del paso 1). Si están

@@ -5,8 +5,6 @@
 ```markdown
 # Bitácora
 
-**Días seguidos:** 3
-
 ## 2026-11-12 · jueves
 
 **Hecho**
@@ -56,19 +54,17 @@
 
 ## Si el proyecto ya tiene bitácora
 
-El paso 1 encuentra `BITACORA.md`, una tabla con una fila por día y la racha arriba. La entrada nueva es otra
-fila **con sus columnas**, no una sección `## 2026-11-14`, y la racha se actualiza donde ya estaba:
+El paso 1 encuentra `BITACORA.md`, una tabla con una fila por día. La entrada nueva es otra fila **con sus
+columnas**, no una sección `## 2026-11-14`:
 
 ```markdown
-**Días cumplidos:** 72 · **Racha actual:** 62 días
-
 | # | Día | ✓ | Hecho | Mañana |
 |---|---|---|---|---|
 | 73 | lun 16 nov | ✅ | Video revisado y subido como no listado. Página del regalo lista en su rama | Subir la rama a main |
 | 74 | mar 17 nov | ✅ | Todo en producción, comprobado. Artículo publicado con el enlace del video | Publicar el video |
 ```
 
-No se crea `docs/bitacora.md` al lado: habría dos bitácoras y la racha volvería a empezar en 1.
+No se crea `docs/bitacora.md` al lado: habría dos bitácoras, y cada día una quedaría a medias.
 
 ## Lo que muestra el ejemplo
 
